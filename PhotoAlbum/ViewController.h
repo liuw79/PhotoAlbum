@@ -10,4 +10,11 @@
 
 @interface ViewController : UIViewController
 
+@property (nonatomic, retain) UIImageView *imageView;
+
+@property (nonatomic, retain) UIPinchGestureRecognizer *pinchGestureRecognizer;
+@property (nonatomic, retain) UIPanGestureRecognizer *panGestureRecognizer;
+@property (nonatomic, retain) UITapGestureRecognizer *tapGestureRecognizer;
+@property (nonatomic, retain) UIRotationGestureRecognizer *rotationGestureRecognizer;
+
 @end
