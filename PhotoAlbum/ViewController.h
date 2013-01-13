@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ViewController : UIViewController
+@interface ViewController : UIViewController<UIGestureRecognizerDelegate>
 
+@property (nonatomic, retain) UIImage *image;
 @property (nonatomic, retain) UIImageView *imageView;
 
 @property (nonatomic, retain) UIPinchGestureRecognizer *pinchGestureRecognizer;
