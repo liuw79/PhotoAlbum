@@ -7,15 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "ImageList.h"
+#import "MyImageView.h"
 
 @interface ViewController : UIViewController<UIGestureRecognizerDelegate>
 
 @property (nonatomic, retain) UIImage *image;
 @property (nonatomic, retain) UIImageView *imageView;
 
-@property (nonatomic, retain) UIPinchGestureRecognizer *pinchGestureRecognizer;
-@property (nonatomic, retain) UIPanGestureRecognizer *panGestureRecognizer;
-@property (nonatomic, retain) UITapGestureRecognizer *tapGestureRecognizer;
-@property (nonatomic, retain) UIRotationGestureRecognizer *rotationGestureRecognizer;
+
 
 @end

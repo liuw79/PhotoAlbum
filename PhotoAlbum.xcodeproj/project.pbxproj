@@ -77,6 +77,8 @@
 		0153535A16A283110052744D /* image056.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0153531F16A283110052744D /* image056.jpg */; };
 		0153535B16A283110052744D /* image057.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0153532016A283110052744D /* image057.jpg */; };
 		0153535C16A283110052744D /* image058.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0153532116A283110052744D /* image058.jpg */; };
+		0153736716A59CE30081AE74 /* MyImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0153736616A59CE30081AE74 /* MyImageView.m */; };
+		0153736C16A59E100081AE74 /* ImageList.m in Sources */ = {isa = PBXBuildFile; fileRef = 0153736B16A59E100081AE74 /* ImageList.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -155,6 +157,10 @@
 		0153531F16A283110052744D /* image056.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = image056.jpg; sourceTree = "<group>"; };
 		0153532016A283110052744D /* image057.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = image057.jpg; sourceTree = "<group>"; };
 		0153532116A283110052744D /* image058.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = image058.jpg; sourceTree = "<group>"; };
+		0153736516A59CE30081AE74 /* MyImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyImageView.h; sourceTree = "<group>"; };
+		0153736616A59CE30081AE74 /* MyImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyImageView.m; sourceTree = "<group>"; };
+		0153736A16A59E100081AE74 /* ImageList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageList.h; sourceTree = "<group>"; };
+		0153736B16A59E100081AE74 /* ImageList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageList.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -201,11 +207,9 @@
 		015352C916A27F730052744D /* PhotoAlbum */ = {
 			isa = PBXGroup;
 			children = (
-				015352D216A27F730052744D /* AppDelegate.h */,
-				015352D316A27F730052744D /* AppDelegate.m */,
-				015352DB16A27F730052744D /* ViewController.h */,
-				015352DC16A27F730052744D /* ViewController.m */,
-				015352DE16A27F730052744D /* ViewController.xib */,
+				015373A016A5A32E0081AE74 /* Controller */,
+				0153736916A59CEF0081AE74 /* View */,
+				0153736316A59C860081AE74 /* Model */,
 				015352CA16A27F730052744D /* Supporting Files */,
 			);
 			path = PhotoAlbum;
@@ -290,6 +294,36 @@
 				0153532116A283110052744D /* image058.jpg */,
 			);
 			path = images;
+			sourceTree = "<group>";
+		};
+		0153736316A59C860081AE74 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				0153736A16A59E100081AE74 /* ImageList.h */,
+				0153736B16A59E100081AE74 /* ImageList.m */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		0153736916A59CEF0081AE74 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				0153736516A59CE30081AE74 /* MyImageView.h */,
+				0153736616A59CE30081AE74 /* MyImageView.m */,
+				015352DE16A27F730052744D /* ViewController.xib */,
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
+		015373A016A5A32E0081AE74 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				015352D216A27F730052744D /* AppDelegate.h */,
+				015352D316A27F730052744D /* AppDelegate.m */,
+				015352DB16A27F730052744D /* ViewController.h */,
+				015352DC16A27F730052744D /* ViewController.m */,
+			);
+			name = Controller;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -420,6 +454,8 @@
 				015352D016A27F730052744D /* main.m in Sources */,
 				015352D416A27F730052744D /* AppDelegate.m in Sources */,
 				015352DD16A27F730052744D /* ViewController.m in Sources */,
+				0153736716A59CE30081AE74 /* MyImageView.m in Sources */,
+				0153736C16A59E100081AE74 /* ImageList.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -536,6 +572,7 @@
 				015352E516A27F730052744D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
