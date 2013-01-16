@@ -20,9 +20,14 @@
     
     ImageList *imgList = [[ImageList alloc] init];
     NSArray *array = [imgList GetImageList];
-    
-    MyImageView *testImage = [[MyImageView alloc] initWithImageName:@"image002" ofType:@"jpg" atLocation:CGPointMake(0, 0)];
-    [self.view addSubview:testImage];
+
+    for (int i = 1; i <= array.count; ++ i)
+    {
+        ListUnit *singleImage = [[ListUnit alloc] initWithOrderNum:i
+                                                      andImageName:[array objectAtIndex:i - 1]];
+        
+        [self.view addSubview:singleImage];
+    }
 }
 
 - (void)didReceiveMemoryWarning

@@ -79,6 +79,8 @@
 		0153535C16A283110052744D /* image058.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 0153532116A283110052744D /* image058.jpg */; };
 		0153736716A59CE30081AE74 /* MyImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0153736616A59CE30081AE74 /* MyImageView.m */; };
 		0153736C16A59E100081AE74 /* ImageList.m in Sources */ = {isa = PBXBuildFile; fileRef = 0153736B16A59E100081AE74 /* ImageList.m */; };
+		015373AF16A6ED6B0081AE74 /* ListUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = 015373AE16A6ED6B0081AE74 /* ListUnit.m */; };
+		015373B216A6FAC90081AE74 /* testView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 015373B116A6FAC90081AE74 /* testView.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -161,6 +163,9 @@
 		0153736616A59CE30081AE74 /* MyImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyImageView.m; sourceTree = "<group>"; };
 		0153736A16A59E100081AE74 /* ImageList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageList.h; sourceTree = "<group>"; };
 		0153736B16A59E100081AE74 /* ImageList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageList.m; sourceTree = "<group>"; };
+		015373AD16A6ED6B0081AE74 /* ListUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListUnit.h; sourceTree = "<group>"; };
+		015373AE16A6ED6B0081AE74 /* ListUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListUnit.m; sourceTree = "<group>"; };
+		015373B116A6FAC90081AE74 /* testView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = testView.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -310,7 +315,10 @@
 			children = (
 				0153736516A59CE30081AE74 /* MyImageView.h */,
 				0153736616A59CE30081AE74 /* MyImageView.m */,
+				015373B116A6FAC90081AE74 /* testView.xib */,
 				015352DE16A27F730052744D /* ViewController.xib */,
+				015373AD16A6ED6B0081AE74 /* ListUnit.h */,
+				015373AE16A6ED6B0081AE74 /* ListUnit.m */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -441,6 +449,7 @@
 				0153535A16A283110052744D /* image056.jpg in Resources */,
 				0153535B16A283110052744D /* image057.jpg in Resources */,
 				0153535C16A283110052744D /* image058.jpg in Resources */,
+				015373B216A6FAC90081AE74 /* testView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -456,6 +465,7 @@
 				015352DD16A27F730052744D /* ViewController.m in Sources */,
 				0153736716A59CE30081AE74 /* MyImageView.m in Sources */,
 				0153736C16A59E100081AE74 /* ImageList.m in Sources */,
+				015373AF16A6ED6B0081AE74 /* ListUnit.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -534,6 +544,7 @@
 		015352E416A27F730052744D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PhotoAlbum/PhotoAlbum-Prefix.pch";
 				INFOPLIST_FILE = "PhotoAlbum/PhotoAlbum-Info.plist";
@@ -545,6 +556,7 @@
 		015352E516A27F730052744D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PhotoAlbum/PhotoAlbum-Prefix.pch";
 				INFOPLIST_FILE = "PhotoAlbum/PhotoAlbum-Info.plist";

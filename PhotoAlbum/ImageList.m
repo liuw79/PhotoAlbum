@@ -19,7 +19,7 @@
     {
         @autoreleasepool {
             NSString *tmpString = [NSString stringWithFormat:
-                                   @"image%03d.jpg", i];
+                                   @"image%03d", i];
             [tmpArray addObject:tmpString];
         }
     }

@@ -9,11 +9,12 @@
 #import <UIKit/UIKit.h>
 #import "ImageList.h"
 #import "MyImageView.h"
+#import "ListUnit.h"
 
 @interface ViewController : UIViewController<UIGestureRecognizerDelegate>
 
-@property (nonatomic, retain) UIImage *image;
-@property (nonatomic, retain) UIImageView *imageView;
+@property (nonatomic, strong) UIImage *image;
+@property (nonatomic, strong) UIImageView *imageView;
 
 
 

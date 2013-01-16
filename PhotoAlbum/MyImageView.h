@@ -12,20 +12,20 @@
 @interface MyImageView : UIImageView
 
 
-@property (nonatomic, retain) UIPinchGestureRecognizer *pinchGestureRecognizer;
-@property (nonatomic, retain) UIPanGestureRecognizer *panGestureRecognizer;
-@property (nonatomic, retain) UITapGestureRecognizer *tapGestureRecognizer;
-@property (nonatomic, retain) UIRotationGestureRecognizer *rotationGestureRecognizer;
+@property (nonatomic, strong) UIPinchGestureRecognizer *pinchGestureRecognizer;
+@property (nonatomic, strong) UIPanGestureRecognizer *panGestureRecognizer;
+@property (nonatomic, strong) UITapGestureRecognizer *tapGestureRecognizer;
+@property (nonatomic, strong) UIRotationGestureRecognizer *rotationGestureRecognizer;
 
 
-- (id)initWithImageName:(NSString*)imageName ofType:(NSString*)imageType atLocation:(CGPoint)imagePoint;
-- (id)initWithImagePath:(NSString*)imagePath atLocation:(CGPoint)imagePoint;
+- (id)initWithImageName:(NSString*)imageName ofType:(NSString*)imageType andBounds:(CGRect)bounds;
+- (id)initWithImagePath:(NSString*)imagePath andBounds:(CGRect)bounds;
 
-- (void)setImageWithName:(NSString*)imageName ofType:(NSString*)imageType atLocation:(CGPoint)imagePoint;
+- (void)setImageWithName:(NSString*)imageName ofType:(NSString*)imageType andBounds:(CGRect)bounds;
 
-- (void)setImageWithPath:(NSString *)imagePath atLocation:(CGPoint)imagePoint;
+- (void)setImageWithPath:(NSString *)imagePath andBounds:(CGRect)bounds;
 
-- (void)setUpProperties;
+- (void)setUpProperties:(CGRect)frame;
 
 @end
 

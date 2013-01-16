@@ -9,55 +9,48 @@
 
 @implementation MyImageView
 
-- (void)dealloc
-{
-    [super dealloc];
-}
 
-- (id)initWithImageName:(NSString*)imageName ofType:(NSString*)imageType atLocation:(CGPoint)imagePoint
+- (id)initWithImageName:(NSString*)imageName ofType:(NSString*)imageType andBounds:(CGRect)bounds
 {
     self = [super init];
     
     if (self)
     {
-        [self setImageWithName:imageName ofType:imageType atLocation:imagePoint];
+        [self setImageWithName:imageName ofType:imageType andBounds:(CGRect)bounds];
         self.userInteractionEnabled = YES;
-        [self setUpProperties];
+        [self setUpProperties:bounds];
+        [self setContentMode:UIViewContentModeScaleAspectFit];
     }
     
     return self;
 }
 
-- (id)initWithImagePath:(NSString *)imagePath atLocation:(CGPoint)imagePoint
+- (id)initWithImagePath:(NSString *)imagePath andBounds:(CGRect)bounds
 {
     self = [super init];
     
     if (self) {
-        [self setImageWithPath:imagePath atLocation:imagePoint];
+        [self setImageWithPath:imagePath andBounds:(CGRect)bounds];
         self.userInteractionEnabled = YES;
-         [self setUpProperties];
+        [self setUpProperties:bounds];
     }
     
     return self;
 }
 
--(void)setImageWithName:(NSString *)imageName ofType:(NSString *)imageType atLocation:(CGPoint)imagePoint
+-(void)setImageWithName:(NSString *)imageName ofType:(NSString *)imageType andBounds:(CGRect)bounds
 {
     NSString *imagePath = [[NSBundle mainBundle] pathForResource:imageName ofType:imageType];
     self.image = [UIImage imageWithContentsOfFile:imagePath];
-    CGRect frame = CGRectMake(imagePoint.x, imagePoint.y, self.image.size.width, self.image.size.height);
     
-    [self setFrame:frame];
+    [self setFrame:bounds];
 }
 
--(void)setImageWithPath:(NSString *)imagePath atLocation:(CGPoint)imagePoint
+-(void)setImageWithPath:(NSString *)imagePath andBounds:(CGRect)bounds
 {
     self.image = [UIImage imageWithContentsOfFile:imagePath];
     
-    CGRect frame = CGRectMake(imagePoint.x, imagePoint.y,
-                              self.image.size.width, self.image.size.height);
-    
-    [self setFrame:frame];
+    [self setFrame:bounds];
 }
 
 - (NSString *)description
@@ -66,22 +59,22 @@
                      alloc] initWithFormat:@"Image Name:%@; Image Frame:%@",
                      self.image,
                      NSStringFromCGRect(self.frame)];
-    return [des autorelease];
+    return des;
 }
 
-- (void)setUpProperties
+- (void)setUpProperties:(CGRect)frame
 {
-    [self setFrame:CGRectMake(0, 0, self.image.size.width, self.image.size.height)];
+    [self setFrame:frame];
     
-    self.panGestureRecognizer = [[[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panAction:)] autorelease];
+    self.panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panAction:)];
     
-    self.pinchGestureRecognizer = [[[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinchAction:)] autorelease];
+    self.pinchGestureRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinchAction:)];
     
-    self.tapGestureRecognizer = [[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapAction:)] autorelease];
+    self.tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapAction:)];
     [self.tapGestureRecognizer setNumberOfTapsRequired:2];
     [self.tapGestureRecognizer setNumberOfTouchesRequired:1];
     
-    self.rotationGestureRecognizer = [[[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(rotationAction:)] autorelease];
+    self.rotationGestureRecognizer = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(rotationAction:)];
     
     [self addGestureRecognizer:self.panGestureRecognizer];
     [self addGestureRecognizer:self.pinchGestureRecognizer];
