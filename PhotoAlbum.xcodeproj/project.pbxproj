@@ -498,6 +498,7 @@
 		015352E416A27F730052744D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PhotoAlbum/PhotoAlbum-Prefix.pch";
 				INFOPLIST_FILE = "PhotoAlbum/PhotoAlbum-Info.plist";
@@ -509,6 +510,7 @@
 		015352E516A27F730052744D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PhotoAlbum/PhotoAlbum-Prefix.pch";
 				INFOPLIST_FILE = "PhotoAlbum/PhotoAlbum-Info.plist";
