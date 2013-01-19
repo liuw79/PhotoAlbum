@@ -20,13 +20,19 @@
     
     ImageList *imgList = [[ImageList alloc] init];
     NSArray *array = [imgList GetImageList];
+    
+    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 1024, 768)];
+    [scrollView setBounces:YES];
+    self.scrollView = scrollView;
+    [self.scrollView setContentSize:CGSizeMake(1024, 768*ceil((float)array.count/6/PAGE_COL))];
+    [self.view addSubview:self.scrollView];
 
     for (int i = 1; i <= array.count; ++ i)
     {
         ListUnit *singleImage = [[ListUnit alloc] initWithOrderNum:i
                                                       andImageName:[array objectAtIndex:i - 1]];
         
-        [self.view addSubview:singleImage];
+        [self.scrollView addSubview:singleImage];
     }
 }
 

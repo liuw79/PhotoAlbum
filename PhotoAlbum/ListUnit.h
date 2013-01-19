@@ -8,13 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "MyImageView.h"
+#import "ValueDefine.h"
 
-#define X_OFF_SET 100
-#define Y_OFF_SET 20
-#define PAGE_COL 4
-#define ySpacing 120
-#define PHOTOWIDTH 128
-#define PHOTOHEIGHT 90
+
 
 @interface ListUnit : MyImageView
 

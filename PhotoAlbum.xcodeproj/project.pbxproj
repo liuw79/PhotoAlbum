@@ -84,6 +84,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		01048D7916AAE41700748A93 /* ValueDefine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ValueDefine.h; sourceTree = "<group>"; };
 		015352BF16A27F730052744D /* PhotoAlbum.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotoAlbum.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		015352C316A27F730052744D /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		015352C516A27F730052744D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -231,6 +232,7 @@
 				015352D516A27F730052744D /* Default.png */,
 				015352D716A27F730052744D /* Default@2x.png */,
 				015352D916A27F730052744D /* Default-568h@2x.png */,
+				01048D7916AAE41700748A93 /* ValueDefine.h */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
