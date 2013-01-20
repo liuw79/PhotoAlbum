@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		01048D9A16AC333E00748A93 /* PhotoScrollerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 01048D9916AC333E00748A93 /* PhotoScrollerViewController.m */; };
 		015352C416A27F730052744D /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 015352C316A27F730052744D /* UIKit.framework */; };
 		015352C616A27F730052744D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 015352C516A27F730052744D /* Foundation.framework */; };
 		015352C816A27F730052744D /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 015352C716A27F730052744D /* CoreGraphics.framework */; };
@@ -86,6 +87,8 @@
 
 /* Begin PBXFileReference section */
 		01048D7916AAE41700748A93 /* ValueDefine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ValueDefine.h; sourceTree = "<group>"; };
+		01048D9816AC333E00748A93 /* PhotoScrollerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoScrollerViewController.h; sourceTree = "<group>"; };
+		01048D9916AC333E00748A93 /* PhotoScrollerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoScrollerViewController.m; sourceTree = "<group>"; };
 		015352BF16A27F730052744D /* PhotoAlbum.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotoAlbum.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		015352C316A27F730052744D /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		015352C516A27F730052744D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -189,7 +192,6 @@
 		015352B416A27F730052744D = {
 			isa = PBXGroup;
 			children = (
-				01A35EB916AB9F44004A6DC3 /* QuartzCore.framework */,
 				015352C916A27F730052744D /* PhotoAlbum */,
 				015352C216A27F730052744D /* Frameworks */,
 				015352C016A27F730052744D /* Products */,
@@ -207,6 +209,7 @@
 		015352C216A27F730052744D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				01A35EB916AB9F44004A6DC3 /* QuartzCore.framework */,
 				015352C316A27F730052744D /* UIKit.framework */,
 				015352C516A27F730052744D /* Foundation.framework */,
 				015352C716A27F730052744D /* CoreGraphics.framework */,
@@ -336,6 +339,8 @@
 				015352D316A27F730052744D /* AppDelegate.m */,
 				015352DB16A27F730052744D /* ViewController.h */,
 				015352DC16A27F730052744D /* ViewController.m */,
+				01048D9816AC333E00748A93 /* PhotoScrollerViewController.h */,
+				01048D9916AC333E00748A93 /* PhotoScrollerViewController.m */,
 			);
 			name = Controller;
 			sourceTree = "<group>";
@@ -472,6 +477,7 @@
 				0153736716A59CE30081AE74 /* MyImageView.m in Sources */,
 				0153736C16A59E100081AE74 /* ImageList.m in Sources */,
 				015373AF16A6ED6B0081AE74 /* ListUnit.m in Sources */,
+				01048D9A16AC333E00748A93 /* PhotoScrollerViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

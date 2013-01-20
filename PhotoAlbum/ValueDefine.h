@@ -16,5 +16,7 @@
 #define PHOTOWIDTH 128
 #define PHOTOHEIGHT 90
 
+#define LANDSCAPE_WIDTH 1024
+#define LANDSCAPE_HEIGHT 708
 
 #endif
