@@ -18,13 +18,16 @@
 {
     [super viewDidLoad];
     
+    [self.view setBackgroundColor:[UIColor blackColor]];
+    
     ImageList *imgList = [[ImageList alloc] init];
     NSArray *array = [imgList GetImageList];
     
-    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 1024, 768)];
+    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 1024, 748)];
     [scrollView setBounces:YES];
     self.scrollView = scrollView;
-    [self.scrollView setContentSize:CGSizeMake(1024, 768*ceil((float)array.count/6/PAGE_COL))];
+    CGFloat scrHeight = Y_OFF_SET + ceil((float)array.count/PAGE_COL)  *  ySpacing;
+    [self.scrollView setContentSize:CGSizeMake(1024, scrHeight)];
     [self.view addSubview:self.scrollView];
 
     for (int i = 1; i <= array.count; ++ i)

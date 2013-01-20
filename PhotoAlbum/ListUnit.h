@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "MyImageView.h"
 #import "ValueDefine.h"
+#import <QuartzCore/QuartzCore.h>
 
 
 

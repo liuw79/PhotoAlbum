@@ -27,6 +27,8 @@
     self = [super initWithFrame:frame];
     if (self) {
         [self setImageWithName:imageName ofType:@"jpg" andBounds:frame];
+        [self.layer setBorderWidth:5.0f];
+        [self.layer setBorderColor:[UIColor whiteColor].CGColor];
     }
     return self;
 }

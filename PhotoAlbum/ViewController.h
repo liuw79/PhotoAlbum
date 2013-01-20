@@ -18,6 +18,4 @@
 @property (nonatomic, strong) UIImageView *imageView;
 @property (nonatomic, strong) UIScrollView *scrollView;
 
-
-
 @end

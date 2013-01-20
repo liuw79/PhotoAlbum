@@ -9,10 +9,10 @@
 #ifndef PhotoAlbum_ValueDefine_h
 #define PhotoAlbum_ValueDefine_h
 
-#define X_OFF_SET 100
+#define X_OFF_SET 40
 #define Y_OFF_SET 20
-#define PAGE_COL 4
-#define ySpacing 120
+#define PAGE_COL 7
+#define ySpacing 100
 #define PHOTOWIDTH 128
 #define PHOTOHEIGHT 90
 

@@ -81,6 +81,7 @@
 		0153736C16A59E100081AE74 /* ImageList.m in Sources */ = {isa = PBXBuildFile; fileRef = 0153736B16A59E100081AE74 /* ImageList.m */; };
 		015373AF16A6ED6B0081AE74 /* ListUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = 015373AE16A6ED6B0081AE74 /* ListUnit.m */; };
 		015373B216A6FAC90081AE74 /* testView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 015373B116A6FAC90081AE74 /* testView.xib */; };
+		01A35EBA16AB9F44004A6DC3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01A35EB916AB9F44004A6DC3 /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -167,6 +168,7 @@
 		015373AD16A6ED6B0081AE74 /* ListUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListUnit.h; sourceTree = "<group>"; };
 		015373AE16A6ED6B0081AE74 /* ListUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListUnit.m; sourceTree = "<group>"; };
 		015373B116A6FAC90081AE74 /* testView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = testView.xib; sourceTree = "<group>"; };
+		01A35EB916AB9F44004A6DC3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -174,6 +176,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01A35EBA16AB9F44004A6DC3 /* QuartzCore.framework in Frameworks */,
 				015352C416A27F730052744D /* UIKit.framework in Frameworks */,
 				015352C616A27F730052744D /* Foundation.framework in Frameworks */,
 				015352C816A27F730052744D /* CoreGraphics.framework in Frameworks */,
@@ -186,6 +189,7 @@
 		015352B416A27F730052744D = {
 			isa = PBXGroup;
 			children = (
+				01A35EB916AB9F44004A6DC3 /* QuartzCore.framework */,
 				015352C916A27F730052744D /* PhotoAlbum */,
 				015352C216A27F730052744D /* Frameworks */,
 				015352C016A27F730052744D /* Products */,
