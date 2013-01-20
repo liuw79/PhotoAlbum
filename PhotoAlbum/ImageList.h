@@ -10,6 +10,6 @@
 
 @interface ImageList : NSObject
 
-- (NSArray*)GetImageList;
++ (NSArray*)GetImageList;
 
 @end

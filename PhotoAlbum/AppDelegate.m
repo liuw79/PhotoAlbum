@@ -17,8 +17,14 @@
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
-    self.viewController = [[ViewController alloc] initWithNibName:@"ViewController" bundle:nil];
-    self.window.rootViewController = self.viewController;
+    
+    self.viewController = [[ViewController alloc] init];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:self.viewController];
+    [nav setTitle:@"PhotoAlbum"];
+    [nav.navigationBar setBarStyle:UIBarStyleBlackOpaque];
+    
+    self.window.rootViewController = nav;
+    nav = nil;
     [self.window makeKeyAndVisible];
     return YES;
 }

@@ -66,19 +66,19 @@
 {
     [self setFrame:frame];
     
-    self.panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panAction:)];
+    //self.panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panAction:)];
     
     self.pinchGestureRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinchAction:)];
     
-    self.tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapAction:)];
+    //self.tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapAction:)];
     [self.tapGestureRecognizer setNumberOfTapsRequired:2];
     [self.tapGestureRecognizer setNumberOfTouchesRequired:1];
     
     self.rotationGestureRecognizer = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(rotationAction:)];
     
-    [self addGestureRecognizer:self.panGestureRecognizer];
+    //[self addGestureRecognizer:self.panGestureRecognizer];
     [self addGestureRecognizer:self.pinchGestureRecognizer];
-    [self addGestureRecognizer:self.tapGestureRecognizer];
+    //[self addGestureRecognizer:self.tapGestureRecognizer];
     [self addGestureRecognizer:self.rotationGestureRecognizer];
     [self setUserInteractionEnabled:YES];
 }

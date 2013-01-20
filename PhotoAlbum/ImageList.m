@@ -11,7 +11,7 @@
 @implementation ImageList
 
 
--(NSArray *)GetImageList
++ (NSArray *)GetImageList
 {
     NSMutableArray *tmpArray = [[NSMutableArray alloc] initWithCapacity:58];
     
@@ -24,7 +24,7 @@
         }
     }
     
-    NSLog(@"%@", tmpArray);
+    //NSLog(@"%@", tmpArray);
     
     return [tmpArray copy];
 }

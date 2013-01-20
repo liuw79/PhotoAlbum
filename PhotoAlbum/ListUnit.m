@@ -22,7 +22,7 @@
     
     CGRect frame = CGRectMake(xPosition, yPosition, PHOTOWIDTH, PHOTOHEIGHT);
     
-    NSLog(@"%@", NSStringFromCGRect(frame));
+    //NSLog(@"%@", NSStringFromCGRect(frame));
     
     self = [super initWithFrame:frame];
     if (self) {
