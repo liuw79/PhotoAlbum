@@ -9,7 +9,8 @@
 #import "PhotoScrollerViewController.h"
 
 @interface PhotoScrollerViewController ()
-
+@property (strong, nonatomic) NSMutableSet *recycledPages;
+@property (strong, nonatomic) NSMutableSet *visiblePages;
 @end
 
 @implementation PhotoScrollerViewController
@@ -23,15 +24,13 @@
     return self;
 }
 
-
-
 - (void)configurePage:(MyImageView *)imageView forIndex:(int)index
 {
+    imageView.tag = index;
     imageView.frame = [self frameForPageAtIndex:index];
 }
 
 - (CGRect)frameForPageAtIndex:(NSUInteger)index {
-    
     CGRect bounds = self.view.bounds;
     CGRect pageFrame = bounds;
     pageFrame.size.width = bounds.size.width + 10;
@@ -44,15 +43,85 @@
 
 - (void)loadView
 {
-    UIScrollView *photoScr = [[UIScrollView alloc] init];
+    CGRect photoScrFrame = [[UIScreen mainScreen] bounds];
+    photoScrFrame.origin.x -= 10;
+    photoScrFrame.size.width += 20;
+    UIScrollView *photoScr = [[UIScrollView alloc] initWithFrame:photoScrFrame];
     [photoScr setPagingEnabled:YES];
     [photoScr setBounces:YES];
-    [photoScr setBackgroundColor:[UIColor whiteColor]];
-    [photoScr setShowsHorizontalScrollIndicator:YES];
-    [photoScr setShowsVerticalScrollIndicator:YES];
+    [photoScr setBackgroundColor:[UIColor blackColor]];
+    [photoScr setShowsHorizontalScrollIndicator:NO];
+    [photoScr setShowsVerticalScrollIndicator:NO];
     self.view = photoScr;
-    
     photoScr = nil;
+    
+    self.recycledPages = [[NSMutableSet alloc] init];
+    self.visiblePages = [[NSMutableSet alloc] init];
+}
+
+- (void)tilePages
+{
+    //计算哪页是当前显示页面
+    CGRect visibleBounds = self.view.bounds;
+    int firstNeededPageIndex = floorf(CGRectGetMinX(visibleBounds)/CGRectGetWidth(visibleBounds));
+    int lastNeededPageIndex = floorf(CGRectGetMaxX(visibleBounds)/CGRectGetWidth(visibleBounds) - 1);
+    firstNeededPageIndex = MAX(firstNeededPageIndex, 0);
+    lastNeededPageIndex = MIN(lastNeededPageIndex, [self.photoArray count] - 1);
+    
+    //重用当前显示页面
+    for (UIImageView *imageView in self.visiblePages)
+    {
+        if (imageView.tag < firstNeededPageIndex || imageView.tag > lastNeededPageIndex)
+        {
+            [self.recycledPages addObject:imageView];
+            [imageView removeFromSuperview];
+        }
+        
+        [self.visiblePages minusSet:self.recycledPages];
+    }
+    
+//    //添加未显示页面
+//    for (int index = firstNeededPageIndex; index <= lastNeededPageIndex; index ++) {
+//        if (!self)
+//        {
+//            <#statements#>
+//        }
+//    }
+}
+
+/*
+ 返回重用的UIImageView
+ */
+-(UIImageView *)dequeueRecyclePage
+{
+    UIImageView *imageView = [self.recycledPages anyObject];
+    
+    if (imageView)
+    {
+        [self.recycledPages removeObject:imageView];
+    }
+    
+    return imageView;
+}
+
+/*
+ 判断是否为当前显示页
+ 参数判断页数
+ return 返回判断布尔值
+ */
+- (BOOL)isDisplayingPageForIndex:(NSUInteger)index
+{
+    BOOL foundPage = NO;
+    
+    for (UIImageView *imageView in self.visiblePages) {
+        if (imageView.tag == index)
+        {
+            foundPage = YES;
+            break;
+        }
+    }
+    
+    return foundPage;
 }
 
 - (void)viewDidLoad
@@ -80,14 +149,14 @@
         iv = nil;
     }
     
-    NSLog(@"Photo Scroll frame:%@", NSStringFromCGRect(self.view.frame));  //TEST
+    //NSLog(@"Photo Scroll frame:%@", NSStringFromCGRect(self.view.frame));  //TEST
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     //NSLog(@"myImageView: %@", self.testImageView);
-    NSLog(@"Photo scr: %@", NSStringFromCGRect(self.view.frame));
-    NSLog(@"Image view: %@", NSStringFromCGRect(self.testImageView.frame));
+    //NSLog(@"Photo scr: %@", NSStringFromCGRect(self.view.frame));
+    //NSLog(@"Image view: %@", NSStringFromCGRect(self.testImageView.frame));
 }
 
 - (void)didReceiveMemoryWarning

@@ -11,7 +11,7 @@
 #import "ImageList.h"
 #import "MyImageView.h"
 
-@interface PhotoScrollerViewController : UIViewController
+@interface PhotoScrollerViewController : UIViewController<UIScrollViewDelegate>
 
 @property (strong, nonatomic) NSArray *photoArray;
 

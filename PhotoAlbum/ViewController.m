@@ -36,9 +36,7 @@
         CGFloat scrHeight = Y_OFF_SET + ceil((float)array.count/PAGE_COL)  *  ySpacing;
         [self.scrollView setContentSize:CGSizeMake(1024, scrHeight)];
     }
-    
-    
-    
+
      [self.navigationController setNavigationBarHidden:YES];
 }
 
@@ -59,10 +57,7 @@
 
 - (void)tapAction:(id)sender
 {
-    testViewController *test = [[testViewController alloc] initWithNibName:@"testViewController" bundle:nil];
-    [self.navigationController setNavigationBarHidden:NO animated:YES];
-    [self.navigationController pushViewController:self.photoScr animated:YES];
-    //[self.view addSubview:test.view];
+    [self.view addSubview:self.photoScr.view];
 }
 
 - (void)didReceiveMemoryWarning
