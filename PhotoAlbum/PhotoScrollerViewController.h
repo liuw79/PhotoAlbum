@@ -14,7 +14,7 @@
 @interface PhotoScrollerViewController : UIViewController<UIScrollViewDelegate>
 
 @property (strong, nonatomic) NSArray *photoArray;
-
+@property (strong, nonatomic) NSNumber *currentImage;
 @property (strong, nonatomic) MyImageView *testImageView;
 
 @end

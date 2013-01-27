@@ -109,13 +109,13 @@
                          completion:nil];
     }
     
-    if (factor < 1)
+    if (factor < 0.2)
     {
         [UIView animateWithDuration:0.2
                               delay:0
                             options:UIViewAnimationCurveLinear
                          animations:^{
-                             gesture.view.transform = CGAffineTransformScale(gesture.view.transform, 1/factor, 1/factor);
+                             gesture.view.transform = CGAffineTransformScale(gesture.view.transform, 0.2/factor, 0.2/factor);
                          }
                          completion:nil];
     }
