@@ -9,6 +9,18 @@
 
 @implementation MyImageView
 
+- (id)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    
+    if (self)
+    {
+        self.userInteractionEnabled = YES;
+        [self setUpProperties:frame];
+    }
+    
+    return self;
+}
 
 - (id)initWithImageName:(NSString*)imageName ofType:(NSString*)imageType andBounds:(CGRect)bounds
 {
@@ -42,14 +54,12 @@
 {
     NSString *imagePath = [[NSBundle mainBundle] pathForResource:imageName ofType:imageType];
     self.image = [UIImage imageWithContentsOfFile:imagePath];
-    
     [self setFrame:bounds];
 }
 
 -(void)setImageWithPath:(NSString *)imagePath andBounds:(CGRect)bounds
 {
     self.image = [UIImage imageWithContentsOfFile:imagePath];
-    
     [self setFrame:bounds];
 }
 

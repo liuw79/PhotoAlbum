@@ -28,6 +28,8 @@
 {
     imageView.tag = index;
     [imageView setImageWithName:[self.photoArray objectAtIndex:index] ofType:@"jpg" andBounds:[self frameForPageAtIndex:index]];
+    
+    NSLog(@"imageview2:%@", imageView);
 }
 
 - (CGRect)frameForPageAtIndex:(NSUInteger)index {
@@ -96,8 +98,10 @@
         {
             MyImageView *imageView = [self dequeueRecyclePage];
             if (nil == imageView) {
-                imageView = [[MyImageView alloc] init];
+                imageView = [[MyImageView alloc] initWithFrame:CGRectMake(0, 0, LANDSCAPE_WIDTH, LANDSCAPE_HEIGHT)];
                 [imageView setAutoresizingMask: UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight];
+                
+                NSLog(@"imageview1:%@", imageView);
             }
             
             [self configurePage:imageView forIndex:index];
@@ -155,7 +159,7 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    NSLog(@"Photo Scroll View: %@", self.view);
+//    NSLog(@"Photo Scroll View: %@", self.view);
 //    self.photoArray = [ImageList GetImageList];
 //    
 //    CGSize contentCGSize = CGSizeMake(self.photoArray.count*self.view.frame.size.width, self.view.frame.size.height);
