@@ -55,6 +55,7 @@
     [photoScr setShowsHorizontalScrollIndicator:NO];
     [photoScr setShowsVerticalScrollIndicator:NO];
     [photoScr setContentSize: CGSizeMake(photoScrFrame.size.width * self.photoArray.count, photoScrFrame.size.height)];
+    [photoScr setUserInteractionEnabled:YES];
     [photoScr setDelegate:self];
     NSLog(@"photoScr contentSize:%@", NSStringFromCGSize(photoScr.contentSize));
     
@@ -63,79 +64,7 @@
     
     self.recycledPages = [[NSMutableSet alloc] init];
     self.visiblePages = [[NSMutableSet alloc] init];
-}
-
-- (void)tilePages
-{
-    //计算哪页是当前显示页面
-    CGRect visibleBounds = self.view.bounds;
-    int firstNeededPageIndex = floorf(CGRectGetMinX(visibleBounds)/CGRectGetWidth(visibleBounds));
-    int lastNeededPageIndex = floorf(CGRectGetMaxX(visibleBounds)/CGRectGetWidth(visibleBounds) - 1);
-    firstNeededPageIndex = MAX(firstNeededPageIndex, 0);
-    lastNeededPageIndex = MIN(lastNeededPageIndex, [self.photoArray count] - 1);
     
-    //重用当前显示页面
-    for (UIImageView *imageView in self.visiblePages)
-    {
-        if (imageView.tag < firstNeededPageIndex || imageView.tag > lastNeededPageIndex)
-        {
-            [self.recycledPages addObject:imageView];
-            [imageView removeFromSuperview];
-        }
-        
-        [self.visiblePages minusSet:self.recycledPages];
-    }
-    
-    //添加未显示页面
-    for (int index = firstNeededPageIndex; index <= lastNeededPageIndex; index ++) {
-        if (!self)
-        {
-            <#statements#>
-        }
-    }
-}
-
-/*
- 返回重用的UIImageView
- */
--(UIImageView *)dequeueRecyclePage
-{
-    UIImageView *imageView = [self.recycledPages anyObject];
-    
-    if (imageView)
-    {
-        [self.recycledPages removeObject:imageView];
-    }
-    
-    return imageView;
-}
-
-/*
- 判断是否为当前显示页
- 参数判断页数
- return 返回判断布尔值
- */
-- (BOOL)isDisplayingPageForIndex:(NSUInteger)index
-{
-    BOOL foundPage = NO;
-    
-    for (UIImageView *imageView in self.visiblePages) {
-        if (imageView.tag == index)
-        {
-            foundPage = YES;
-            break;
-        }
-    }
-    
-    return foundPage;
-=======
-    
-    [self tilePages];
->>>>>>> 8f7a6eb4f3d2d829cb9ab559cbf6884f440037ad
-}
-
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView
-{
     [self tilePages];
 }
 
@@ -211,6 +140,11 @@
     }
     
     return foundPage;
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    [self tilePages];
 }
 
 - (void)viewDidLoad
