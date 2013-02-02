@@ -18,14 +18,13 @@
 @property (nonatomic, strong) UIRotationGestureRecognizer *rotationGestureRecognizer;
 
 
-- (id)initWithImageName:(NSString*)imageName ofType:(NSString*)imageType andBounds:(CGRect)bounds;
-- (id)initWithImagePath:(NSString*)imagePath andBounds:(CGRect)bounds;
+- (id)initWithImageName:(NSString*)imageName ofType:(NSString*)imageType andFrame:(CGRect)frame;
+- (id)initWithImagePath:(NSString*)imagePath andFrame:(CGRect)frame;
 
-- (void)setImageWithName:(NSString*)imageName ofType:(NSString*)imageType andBounds:(CGRect)bounds;
+- (void)setImageWithName:(NSString*)imageName ofType:(NSString*)imageType andFrame:(CGRect)frame;
 
-- (void)setImageWithPath:(NSString *)imagePath andBounds:(CGRect)bounds;
+- (void)setImageWithPath:(NSString *)imagePath andFrame:(CGRect)frame;
 
-- (void)setUpProperties:(CGRect)frame;
 
 @end
 

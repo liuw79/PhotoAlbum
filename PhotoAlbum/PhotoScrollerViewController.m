@@ -19,7 +19,7 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-
+        
     }
     return self;
 }
@@ -27,7 +27,8 @@
 - (void)configurePage:(MyImageView *)imageView forIndex:(int)index
 {
     imageView.tag = index;
-    [imageView setImageWithName:[self.photoArray objectAtIndex:index] ofType:@"jpg" andBounds:[self frameForPageAtIndex:index]];
+    [imageView setImageWithName:[self.photoArray objectAtIndex:index] ofType:@"jpg"
+                      andFrame:[self frameForPageAtIndex:index]];
     
     NSLog(@"imageview2:%@", imageView);
 }
@@ -37,8 +38,8 @@
     CGRect pageFrame = bounds;
     pageFrame.size.width = bounds.size.width + 10;
     pageFrame.origin.x = bounds.size.width * index;
-//    NSLog(@"photoScr bounds: %@", NSStringFromCGRect(bounds));
-//    NSLog(@"pageFrame: %@", NSStringFromCGRect(pageFrame));
+    //    NSLog(@"photoScr bounds: %@", NSStringFromCGRect(bounds));
+    //    NSLog(@"pageFrame: %@", NSStringFromCGRect(pageFrame));
     
     return pageFrame;
 }
@@ -52,22 +53,25 @@
     photoScrFrame.size.width += 20;
     UIScrollView *photoScr = [[UIScrollView alloc] initWithFrame:photoScrFrame];
     [photoScr setPagingEnabled:YES];
-    [photoScr setBounces:YES];
+    [photoScr setDirectionalLockEnabled:YES];
+    [photoScr setAlwaysBounceHorizontal:YES];
     [photoScr setBackgroundColor:[UIColor blackColor]];
     [photoScr setShowsHorizontalScrollIndicator:NO];
     [photoScr setShowsVerticalScrollIndicator:NO];
     [photoScr setContentSize: CGSizeMake(photoScrFrame.size.width * self.photoArray.count, photoScrFrame.size.height)];
-    [photoScr setUserInteractionEnabled:YES];
     [photoScr setDelegate:self];
     NSLog(@"photoScr contentSize:%@", NSStringFromCGSize(photoScr.contentSize));
     
     self.view = photoScr;
+    [self.view setBackgroundColor:[UIColor blackColor]];
     photoScr = nil;
     
     self.recycledPages = [[NSMutableSet alloc] init];
     self.visiblePages = [[NSMutableSet alloc] init];
     
     [self tilePages];
+    
+    NSLog(@"scr frame %@", NSStringFromCGRect(self.view.frame));
 }
 
 - (void)tilePages
@@ -159,25 +163,25 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-//    NSLog(@"Photo Scroll View: %@", self.view);
-//    self.photoArray = [ImageList GetImageList];
-//    
-//    CGSize contentCGSize = CGSizeMake(self.photoArray.count*self.view.frame.size.width, self.view.frame.size.height);
-//    [(UIScrollView*)self.view setContentSize:contentCGSize];
-//    
-//    //add photos
-//    for (int i = 0; i < self.photoArray.count; ++ i)
-//    {
-//        MyImageView *iv = [[MyImageView alloc] initWithImageName:[self.photoArray objectAtIndex:i]
-//                                                          ofType:@"jpg" andBounds:CGRectMake(0, 0, LANDSCAPE_WIDTH, LANDSCAPE_HEIGHT)];
-//        //ofType:@"jpg" andBounds:CGRectNull];
-//        [self configurePage:iv forIndex:i];
-//        [self.view addSubview:iv];
-//        self.testImageView = iv;
-//        iv = nil;
-//    }
+    //    NSLog(@"Photo Scroll View: %@", self.view);
+    //    self.photoArray = [ImageList GetImageList];
+    //
+    //    CGSize contentCGSize = CGSizeMake(self.photoArray.count*self.view.frame.size.width, self.view.frame.size.height);
+    //    [(UIScrollView*)self.view setContentSize:contentCGSize];
+    //
+    //    //add photos
+    //    for (int i = 0; i < self.photoArray.count; ++ i)
+    //    {
+    //        MyImageView *iv = [[MyImageView alloc] initWithImageName:[self.photoArray objectAtIndex:i]
+    //                                                          ofType:@"jpg" andBounds:CGRectMake(0, 0, LANDSCAPE_WIDTH, LANDSCAPE_HEIGHT)];
+    //        //ofType:@"jpg" andBounds:CGRectNull];
+    //        [self configurePage:iv forIndex:i];
+    //        [self.view addSubview:iv];
+    //        self.testImageView = iv;
+    //        iv = nil;
+    //    }
     
-    //NSLog(@"Photo Scroll frame:%@", NSStringFromCGRect(self.view.frame));  //TEST
+    NSLog(@"Photo Scroll frame:%@", NSStringFromCGRect(self.view.frame));  //TEST
 }
 
 - (void)viewDidAppear:(BOOL)animated

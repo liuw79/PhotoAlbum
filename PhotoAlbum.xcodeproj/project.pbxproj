@@ -85,6 +85,7 @@
 		015373AF16A6ED6B0081AE74 /* ListUnit.m in Sources */ = {isa = PBXBuildFile; fileRef = 015373AE16A6ED6B0081AE74 /* ListUnit.m */; };
 		015373B216A6FAC90081AE74 /* testView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 015373B116A6FAC90081AE74 /* testView.xib */; };
 		01A35EBA16AB9F44004A6DC3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01A35EB916AB9F44004A6DC3 /* QuartzCore.framework */; };
+		01D908A316BCEA160068A3AC /* ImageFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D908A216BCEA160068A3AC /* ImageFrame.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -177,6 +178,8 @@
 		015373AE16A6ED6B0081AE74 /* ListUnit.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListUnit.m; sourceTree = "<group>"; };
 		015373B116A6FAC90081AE74 /* testView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = testView.xib; sourceTree = "<group>"; };
 		01A35EB916AB9F44004A6DC3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		01D908A116BCEA160068A3AC /* ImageFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageFrame.h; sourceTree = "<group>"; };
+		01D908A216BCEA160068A3AC /* ImageFrame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageFrame.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -327,6 +330,8 @@
 		0153736916A59CEF0081AE74 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				01D908A116BCEA160068A3AC /* ImageFrame.h */,
+				01D908A216BCEA160068A3AC /* ImageFrame.m */,
 				0153736516A59CE30081AE74 /* MyImageView.h */,
 				0153736616A59CE30081AE74 /* MyImageView.m */,
 				015373B116A6FAC90081AE74 /* testView.xib */,
@@ -488,6 +493,7 @@
 				015373AF16A6ED6B0081AE74 /* ListUnit.m in Sources */,
 				01048D9A16AC333E00748A93 /* PhotoScrollerViewController.m in Sources */,
 				01048D9E16AC3A9D00748A93 /* testViewController.m in Sources */,
+				01D908A316BCEA160068A3AC /* ImageFrame.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

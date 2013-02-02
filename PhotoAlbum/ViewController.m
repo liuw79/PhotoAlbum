@@ -16,7 +16,9 @@
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    [self.photoScr.view setFrame:self.view.frame];
+    [self.bigPhotoScrollerViewController.view setFrame:CGRectMake(0, 0, LANDSCAPE_WIDTH, LANDSCAPE_HEIGHT)];
+    
+    NSLog(@"vc scr frame %@", NSStringFromCGRect(self.bigPhotoScrollerViewController.view.frame));
     
     NSArray *array = [ImageList GetImageList];
     
@@ -26,18 +28,24 @@
         [tapGestureRecognizer setNumberOfTapsRequired:1];
         //[tapGestureRecognizer setNumberOfTouchesRequired:1];
         
-        ListUnit *singleImage = [[ListUnit alloc] initWithOrderNum:i
-                                                      andImageName:[array objectAtIndex:i - 1]];
+        //ListUnit *singleImage = [[ListUnit alloc] initWithOrderNum:i
+        //                                           andImageName:[array objectAtIndex:i - 1]];
+        MyImageView *singleImage = [[MyImageView alloc] initWithImageName:[array objectAtIndex:i - 1]
+                                                                   ofType:@"jpg" andFrame:[ImageFrame FrameWithOrdernumber:i]];
         
         [singleImage addGestureRecognizer:tapGestureRecognizer];
         [singleImage setUserInteractionEnabled:YES];
+        [singleImage.layer setBorderWidth:5.0f];
+        [singleImage.layer setBorderColor:[UIColor whiteColor].CGColor];
         
-        [self.scrollView addSubview:singleImage];
+        [self.smallPhotoScrollView addSubview:singleImage];
         CGFloat scrHeight = Y_OFF_SET + ceil((float)array.count/PAGE_COL)  *  ySpacing;
-        [self.scrollView setContentSize:CGSizeMake(1024, scrHeight)];
+        [self.smallPhotoScrollView setContentSize:CGSizeMake(LANDSCAPE_WIDTH, scrHeight)];
     }
-
-     [self.navigationController setNavigationBarHidden:YES];
+    
+    [self.navigationController setNavigationBarHidden:YES];
+    
+    
 }
 
 - (void)viewDidLoad
@@ -46,18 +54,20 @@
     
     [self.view setBackgroundColor:[UIColor blackColor]];
     
-    UIScrollView *scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, 1024, 748)];
-    [scrollView setBounces:YES];
-    self.scrollView = scrollView;
-    [self.view addSubview:self.scrollView];
+    UIScrollView *smallPhotoScrollView = [[UIScrollView alloc]
+                                          initWithFrame:CGRectMake(0, 0, LANDSCAPE_WIDTH, LANDSCAPE_HEIGHT)];
+    self.smallPhotoScrollView = smallPhotoScrollView;
+    [self.view addSubview:self.smallPhotoScrollView];
     
-    self.photoScr = [[PhotoScrollerViewController alloc] init];
-    [self.photoScr.view setFrame:self.view.frame];
+    self.bigPhotoScrollerViewController = [[PhotoScrollerViewController alloc] init];
+    [self.bigPhotoScrollerViewController.view
+     setFrame:CGRectMake(0, 0, LANDSCAPE_WIDTH, LANDSCAPE_HEIGHT)];
 }
 
 - (void)tapAction:(id)sender
 {
-    [self.view addSubview:self.photoScr.view];
+    [self.view addSubview:self.bigPhotoScrollerViewController.view];
+    
 }
 
 - (void)didReceiveMemoryWarning

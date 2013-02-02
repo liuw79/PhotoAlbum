@@ -27,7 +27,8 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    MyImageView *iv = [[MyImageView alloc] initWithImageName:@"image002" ofType:@"jpg" andBounds:CGRectMake(0, 0, 800, 500)];
+    MyImageView *iv = [[MyImageView alloc] initWithImageName:@"image002" ofType:@"jpg"
+                                                   andFrame:CGRectMake(0, 0, 800, 500)];
     [self.view addSubview:iv];
     iv = nil;
 }

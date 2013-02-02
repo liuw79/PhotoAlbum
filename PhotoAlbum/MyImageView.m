@@ -22,45 +22,43 @@
     return self;
 }
 
-- (id)initWithImageName:(NSString*)imageName ofType:(NSString*)imageType andBounds:(CGRect)bounds
+- (id)initWithImageName:(NSString*)imageName ofType:(NSString*)imageType andFrame:(CGRect)frame
 {
-    self = [super init];
+    self = [super initWithFrame:frame];
     
     if (self)
     {
-        [self setImageWithName:imageName ofType:imageType andBounds:(CGRect)bounds];
+        [self setImageWithName:imageName ofType:imageType andFrame:(CGRect)frame];
         self.userInteractionEnabled = YES;
-        [self setUpProperties:bounds];
         [self setContentMode:UIViewContentModeScaleAspectFit];
     }
     
     return self;
 }
 
-- (id)initWithImagePath:(NSString *)imagePath andBounds:(CGRect)bounds
+- (id)initWithImagePath:(NSString *)imagePath andFrame:(CGRect)frame
 {
-    self = [super init];
+    self = [super initWithFrame:frame];
     
     if (self) {
-        [self setImageWithPath:imagePath andBounds:(CGRect)bounds];
+        [self setImageWithPath:imagePath andFrame:(CGRect)frame];
         self.userInteractionEnabled = YES;
-        [self setUpProperties:bounds];
     }
     
     return self;
 }
 
--(void)setImageWithName:(NSString *)imageName ofType:(NSString *)imageType andBounds:(CGRect)bounds
+-(void)setImageWithName:(NSString *)imageName ofType:(NSString *)imageType andFrame:(CGRect)frame
 {
     NSString *imagePath = [[NSBundle mainBundle] pathForResource:imageName ofType:imageType];
     self.image = [UIImage imageWithContentsOfFile:imagePath];
-    [self setFrame:bounds];
+    [self setFrame:frame];
 }
 
--(void)setImageWithPath:(NSString *)imagePath andBounds:(CGRect)bounds
+-(void)setImageWithPath:(NSString *)imagePath andFrame:(CGRect)frame
 {
     self.image = [UIImage imageWithContentsOfFile:imagePath];
-    [self setFrame:bounds];
+    [self setFrame:frame];
 }
 
 - (NSString *)description
@@ -75,85 +73,6 @@
 - (void)setUpProperties:(CGRect)frame
 {
     [self setFrame:frame];
-    
-    //self.panGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panAction:)];
-    
-    self.pinchGestureRecognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(pinchAction:)];
-    
-    //self.tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapAction:)];
-    [self.tapGestureRecognizer setNumberOfTapsRequired:2];
-    [self.tapGestureRecognizer setNumberOfTouchesRequired:1];
-    
-    self.rotationGestureRecognizer = [[UIRotationGestureRecognizer alloc] initWithTarget:self action:@selector(rotationAction:)];
-    
-    //[self addGestureRecognizer:self.panGestureRecognizer];
-    [self addGestureRecognizer:self.pinchGestureRecognizer];
-    //[self addGestureRecognizer:self.tapGestureRecognizer];
-    [self addGestureRecognizer:self.rotationGestureRecognizer];
-    [self setUserInteractionEnabled:YES];
-}
-
-- (void)panAction:(UIPanGestureRecognizer *)gesture
-{
-    CGPoint translate = [gesture translationInView:self];
-    
-    gesture.view.center = CGPointMake(translate.x + gesture.view.center.x, translate.y + gesture.view.center.y);
-    
-    [gesture setTranslation:CGPointMake(0, 0) inView:self];
-}
-
-- (void)pinchAction:(UIPinchGestureRecognizer *)gesture
-{
-    CGFloat factor = [gesture scale];
-    gesture.view.transform = CGAffineTransformMakeScale(factor, factor);
-    
-    //不允许大于4倍,小于原大
-    if (factor > 4)
-    {
-        [UIView animateWithDuration:0.2
-                              delay:0
-                            options:UIViewAnimationCurveLinear
-                         animations:^{
-                             gesture.view.transform = CGAffineTransformScale(gesture.view.transform, 4/factor, 4/factor);
-                         }
-                         completion:nil];
-    }
-    
-    if (factor < 0.2)
-    {
-        [UIView animateWithDuration:0.2
-                              delay:0
-                            options:UIViewAnimationCurveLinear
-                         animations:^{
-                             gesture.view.transform = CGAffineTransformScale(gesture.view.transform, 0.2/factor, 0.2/factor);
-                         }
-                         completion:nil];
-    }
-}
-
-- (void)tapAction:(UITapGestureRecognizer *)gesture
-{
-    [UIView animateWithDuration:0.3
-                          delay:0
-                        options:UIViewAnimationCurveLinear
-                     animations:^{
-                         if (self.frame.size.width < self.image.size.width*2)
-                         {
-                             gesture.view.transform = CGAffineTransformScale(gesture.view.transform, 2, 2);
-                         }
-                         else
-                         {
-                             gesture.view.transform = CGAffineTransformScale(gesture.view.transform, 0.5, 0.5);
-                         }
-                     }
-                     completion:nil];
-}
-
-- (void)rotationAction:(UIRotationGestureRecognizer *)gesture
-{
-    CGFloat rot = [gesture rotation];
-    gesture.view.transform = CGAffineTransformRotate(gesture.view.transform, rot);
-    gesture.rotation = 0;
 }
 
 @end
