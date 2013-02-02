@@ -11,10 +11,18 @@
 #import "ImageList.h"
 #import "MyImageView.h"
 
-@interface PhotoScrollerViewController : UIViewController<UIScrollViewDelegate>
+@protocol PhotoViewDelegate;
 
-@property (strong, nonatomic) NSArray *photoArray;
-@property (strong, nonatomic) NSNumber *currentImage;
-@property (strong, nonatomic) MyImageView *testImageView;
+@interface PhotoScrollerViewController : UIViewController<UIScrollViewDelegate, UIGestureRecognizerDelegate>
+
+@property(nonatomic,readwrite)CGPoint selectedCellOriginalPos;
+@property(nonatomic,assign)id<PhotoViewDelegate>photoDelegate;
+@end
+
+@protocol PhotoViewDelegate <NSObject>
+- (void)photoViewDisappear:(BOOL)value;
+- (void)animateImageViewBackToNormal:(UIImageView *)imageView WithPosition:(CGPoint)point;
+- (void)moveImageView:(UIImageView *)imageView ToPosition:(CGPoint)point;
 
 @end
+

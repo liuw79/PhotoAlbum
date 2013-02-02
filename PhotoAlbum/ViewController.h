@@ -16,10 +16,8 @@
 #import "ImageFrame.h"
 #import "ValueDefine.h"
 
-@interface ViewController : UIViewController<UIGestureRecognizerDelegate>
-@property (nonatomic, strong) PhotoScrollerViewController *bigPhotoScrollerViewController;
-@property (nonatomic, strong) UIImage *image;
-@property (nonatomic, strong) UIImageView *imageView;
-@property (nonatomic, strong) UIScrollView *smallPhotoScrollView;
+
+@interface ViewController : UIViewController<UIGestureRecognizerDelegate, PhotoViewDelegate>
 
 @end
+
