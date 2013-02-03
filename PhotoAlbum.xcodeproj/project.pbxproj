@@ -86,6 +86,7 @@
 		015373B216A6FAC90081AE74 /* testView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 015373B116A6FAC90081AE74 /* testView.xib */; };
 		01A35EBA16AB9F44004A6DC3 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01A35EB916AB9F44004A6DC3 /* QuartzCore.framework */; };
 		01D908A316BCEA160068A3AC /* ImageFrame.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D908A216BCEA160068A3AC /* ImageFrame.m */; };
+		01D9820216BE108300508FED /* ThumbnailPickerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 01D9820116BE108300508FED /* ThumbnailPickerView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -180,6 +181,8 @@
 		01A35EB916AB9F44004A6DC3 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		01D908A116BCEA160068A3AC /* ImageFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageFrame.h; sourceTree = "<group>"; };
 		01D908A216BCEA160068A3AC /* ImageFrame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageFrame.m; sourceTree = "<group>"; };
+		01D9820016BE108300508FED /* ThumbnailPickerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThumbnailPickerView.h; sourceTree = "<group>"; };
+		01D9820116BE108300508FED /* ThumbnailPickerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThumbnailPickerView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -248,6 +251,8 @@
 				015352D716A27F730052744D /* Default@2x.png */,
 				015352D916A27F730052744D /* Default-568h@2x.png */,
 				01048D7916AAE41700748A93 /* ValueDefine.h */,
+				01D9820016BE108300508FED /* ThumbnailPickerView.h */,
+				01D9820116BE108300508FED /* ThumbnailPickerView.m */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -494,6 +499,7 @@
 				01048D9A16AC333E00748A93 /* PhotoScrollerViewController.m in Sources */,
 				01048D9E16AC3A9D00748A93 /* testViewController.m in Sources */,
 				01D908A316BCEA160068A3AC /* ImageFrame.m in Sources */,
+				01D9820216BE108300508FED /* ThumbnailPickerView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -581,6 +587,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PhotoAlbum/PhotoAlbum-Prefix.pch";
 				INFOPLIST_FILE = "PhotoAlbum/PhotoAlbum-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
@@ -595,6 +602,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "PhotoAlbum/PhotoAlbum-Prefix.pch";
 				INFOPLIST_FILE = "PhotoAlbum/PhotoAlbum-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;

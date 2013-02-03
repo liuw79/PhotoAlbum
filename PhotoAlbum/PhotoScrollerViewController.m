@@ -7,6 +7,7 @@
 //
 
 #import "PhotoScrollerViewController.h"
+#import "ThumbnailPickerView.h"
 #import <QuartzCore/QuartzCore.h>
 
 static const CGFloat kDefaultAnimationDuration = 0.3;
@@ -27,6 +28,7 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 @property(nonatomic,readwrite)CGFloat deltaScale;
 @property(nonatomic,readwrite)CGFloat lastRotation;
 @property(nonatomic,readwrite)CGPoint lastPosition;
+@property(nonatomic,retain)ThumbnailPickerView *pickerView;
 @property(nonatomic,retain)UIToolbar *toolBar;
 
 @end
@@ -37,7 +39,25 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
+        //获取所有图片数据
+        self.photoArray = [ImageList GetImageList];
         
+        //建立图片ScrollView
+        CGRect photoScrFrame = CGRectMake(0, 0, LANDSCAPE_WIDTH, 600);
+        UIScrollView *photoScr = [[UIScrollView alloc] initWithFrame:photoScrFrame];
+        [photoScr setPagingEnabled:YES];
+        [photoScr setDirectionalLockEnabled:YES];
+        [photoScr setAlwaysBounceHorizontal:YES];
+        [photoScr setBackgroundColor:[UIColor blackColor]];
+        [photoScr setShowsHorizontalScrollIndicator:NO];
+        [photoScr setShowsVerticalScrollIndicator:NO];
+        [photoScr setContentSize: CGSizeMake(photoScrFrame.size.width * self.photoArray.count, photoScrFrame.size.height)];
+        [photoScr setDelegate:self];
+        [photoScr setBackgroundColor:[UIColor greenColor]];
+        self.scrollView = photoScr;
+        [self.view addSubview:self.scrollView];     //TEST
+        NSLog(@"PhotoScrollerViewController  init scrollView:%@", self.scrollView);   //TEST
+        photoScr = nil;
     }
     return self;
 }
@@ -47,8 +67,6 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
     imageView.tag = index;
     [imageView setImageWithName:[self.photoArray objectAtIndex:index] ofType:@"jpg"
                       andFrame:[self frameForPageAtIndex:index]];
-    
-    NSLog(@"imageview2:%@", imageView);
 }
 
 - (CGRect)frameForPageAtIndex:(NSUInteger)index {
@@ -64,38 +82,45 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 
 - (void)loadView
 {
-    self.photoArray = [ImageList GetImageList];
+    self.view  = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 1024, 768)];
+    [self.view setBackgroundColor:[UIColor blueColor]];
+    NSLog(@"PhotoScrollerViewController frame:%@  (LoadView)", NSStringFromCGRect(self.view.frame));
+
     
-    CGRect photoScrFrame = CGRectMake(0, 0, 1024, 768);
-    photoScrFrame.origin.x -= 10;
-    photoScrFrame.size.width += 20;
-    UIScrollView *photoScr = [[UIScrollView alloc] initWithFrame:photoScrFrame];
-    [photoScr setPagingEnabled:YES];
-    [photoScr setDirectionalLockEnabled:YES];
-    [photoScr setAlwaysBounceHorizontal:YES];
-    [photoScr setBackgroundColor:[UIColor blackColor]];
-    [photoScr setShowsHorizontalScrollIndicator:NO];
-    [photoScr setShowsVerticalScrollIndicator:NO];
-    [photoScr setContentSize: CGSizeMake(photoScrFrame.size.width * self.photoArray.count, photoScrFrame.size.height)];
-    [photoScr setDelegate:self];
-    NSLog(@"photoScr contentSize:%@", NSStringFromCGSize(photoScr.contentSize));
     
-    self.view = photoScr;
-    [self.view setBackgroundColor:[UIColor blackColor]];
-    photoScr = nil;
-    
+    //初始化复用相关SET
     self.recycledPages = [[NSMutableSet alloc] init];
     self.visiblePages = [[NSMutableSet alloc] init];
     
+    //根据需要创建图片对象
     [self tilePages];
     
-    NSLog(@"scr frame %@", NSStringFromCGRect(self.view.frame));
+    //缩略图ToolBar
+    self.toolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 728, 1024, 40)];          //TEST
+    self.pickerView = [[ThumbnailPickerView alloc] init];
+    [self.toolBar addSubview:self.pickerView];
+    [self.view addSubview:self.toolBar];
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+	// Do any additional setup after loading the view.
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+   // [self.scrollView scrollRectToVisible:CGRectMake(1024*3, 0, 1024, <#CGFloat height#>) animated:<#(BOOL)#>]
 }
 
 - (void)tilePages
 {
     //计算哪页是当前显示页面
-    CGRect visibleBounds = self.view.bounds;
+    CGRect visibleBounds = self.scrollView.bounds;
     int firstNeededPageIndex = floorf(CGRectGetMinX(visibleBounds)/CGRectGetWidth(visibleBounds));
     int lastNeededPageIndex = floorf((CGRectGetMaxX(visibleBounds)-1)/CGRectGetWidth(visibleBounds));
     firstNeededPageIndex = MAX(firstNeededPageIndex, 0);
@@ -127,7 +152,7 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
             }
             
             [self configurePage:imageView forIndex:index];
-            [self.view addSubview:imageView];
+            [self.scrollView addSubview:imageView];
             [self.visiblePages addObject:imageView];
         }
     }
@@ -173,37 +198,10 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
     [self tilePages];
 }
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-	// Do any additional setup after loading the view.
-}
 
-- (void)viewWillAppear:(BOOL)animated
+-(void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
 {
-    //    NSLog(@"Photo Scroll View: %@", self.view);
-    //    self.photoArray = [ImageList GetImageList];
-    //
-    //    CGSize contentCGSize = CGSizeMake(self.photoArray.count*self.view.frame.size.width, self.view.frame.size.height);
-    //    [(UIScrollView*)self.view setContentSize:contentCGSize];
-    //
-    //    //add photos
-    //    for (int i = 0; i < self.photoArray.count; ++ i)
-    //    {
-    //        MyImageView *iv = [[MyImageView alloc] initWithImageName:[self.photoArray objectAtIndex:i]
-    //                                                          ofType:@"jpg" andBounds:CGRectMake(0, 0, LANDSCAPE_WIDTH, LANDSCAPE_HEIGHT)];
-    //        //ofType:@"jpg" andBounds:CGRectNull];
-    //        [self configurePage:iv forIndex:i];
-    //        [self.view addSubview:iv];
-    //        self.testImageView = iv;
-    //        iv = nil;
-    //    }
-    
-    NSLog(@"Photo Scroll frame:%@", NSStringFromCGRect(self.view.frame));  //TEST
-}
 
-- (void)viewDidAppear:(BOOL)animated
-{
 }
 
 - (void)addGestureRecognizersWithView:(UIView *)view
@@ -227,9 +225,7 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 #pragma mark - ======================UIGestureRecognizerDelegate====================
 -(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
-    
     return YES;
-    
 }
 
 -(BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
@@ -310,7 +306,7 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
                 self.toolBar.alpha = 1;
                 
                 //***************移除PhotoView******************//
-                [self.view removeFromSuperview];
+                [self.scrollView removeFromSuperview];
                 
                 //***********设置复位动画延时********************//
                 [UIView animateWithDuration:kDefaultAnimationDuration
@@ -363,7 +359,7 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
             //***********************Pinch手势进行时，根据当前拖动位置，更新选中的Cell图片的位置***************************//
             if ([self.photoDelegate respondsToSelector:@selector(moveImageView:ToPosition:)]) {
                 
-                [self.photoDelegate moveImageView:self.imageView ToPosition:self.view.center];
+                [self.photoDelegate moveImageView:self.imageView ToPosition:self.scrollView.center];
                 
             }
             

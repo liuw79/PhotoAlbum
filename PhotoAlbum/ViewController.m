@@ -14,20 +14,21 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 
 @interface ViewController ()
 
+@property (nonatomic, strong) NSArray *photoArray;
 @property (nonatomic, strong) PhotoScrollerViewController *bigPhotoScrollerViewController;
 @property (nonatomic, strong) UIImage *image;
 @property (nonatomic, strong) UIScrollView *smallPhotoScrollView;
-@property (nonatomic,retain)UIImageView *imageView;
-@property (nonatomic,retain)UIPanGestureRecognizer *panGesture;
-@property (nonatomic,retain)UIPinchGestureRecognizer *pinchGesture;
-@property (nonatomic,retain)UITapGestureRecognizer *tapGesture;
-@property (nonatomic,retain)UIRotationGestureRecognizer *rotateGesture;
-@property (nonatomic,readwrite)CGPoint lastPosition;
-@property (nonatomic,readwrite)CGFloat lastScale;
-@property (nonatomic,readwrite)CGFloat preScale;
-@property (nonatomic,readwrite)CGFloat deltaScale;
-@property (nonatomic,readwrite)CGFloat lastRotation;
-@property (nonatomic,retain)PhotoScrollerViewController *photoViewController;
+@property (nonatomic,retain) UIImageView *imageView;
+@property (nonatomic,retain) UIPanGestureRecognizer *panGesture;
+@property (nonatomic,retain) UIPinchGestureRecognizer *pinchGesture;
+@property (nonatomic,retain) UITapGestureRecognizer *tapGesture;
+@property (nonatomic,retain) UIRotationGestureRecognizer *rotateGesture;
+@property (nonatomic,readwrite) CGPoint lastPosition;
+@property (nonatomic,readwrite) CGFloat lastScale;
+@property (nonatomic,readwrite) CGFloat preScale;
+@property (nonatomic,readwrite) CGFloat deltaScale;
+@property (nonatomic,readwrite) CGFloat lastRotation;
+@property (nonatomic,retain) PhotoScrollerViewController *photoViewController;
 
 - (void)presentPhotoView;
 
@@ -35,26 +36,41 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 
 @implementation ViewController
 
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    self.photoArray = [ImageList GetImageList];
+    
+    [self.view setBackgroundColor:[UIColor blackColor]];
+    
+    UIScrollView *smallPhotoScrollView = [[UIScrollView alloc]
+                                          initWithFrame:CGRectMake(0, 0, LANDSCAPE_WIDTH, LANDSCAPE_HEIGHT)];
+    self.smallPhotoScrollView = smallPhotoScrollView;
+    [self.view addSubview:self.smallPhotoScrollView];
+    
+    self.bigPhotoScrollerViewController = [[PhotoScrollerViewController alloc] init];
+    [self.bigPhotoScrollerViewController.scrollView setContentSize:CGSizeMake(LANDSCAPE_WIDTH * self.photoArray.count, self.bigPhotoScrollerViewController.scrollView.frame.size.height)];
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
-    [self.bigPhotoScrollerViewController.view setFrame:CGRectMake(0, 0, LANDSCAPE_WIDTH, LANDSCAPE_HEIGHT)];
+    [super viewWillAppear:animated];
     
-    NSLog(@"vc scr frame %@", NSStringFromCGRect(self.bigPhotoScrollerViewController.view.frame));
-    
-    NSArray *array = [ImageList GetImageList];
-    
-    for (int i = 1; i <= array.count; ++ i)
+    for (int i = 1; i <= self.photoArray.count; ++ i)
     {
-        MyImageView *singleImageView = [[MyImageView alloc] initWithImageName:[array objectAtIndex:i - 1]
+        MyImageView *cellImageView
+        = [[MyImageView alloc] initWithImageName:[self.photoArray objectAtIndex:i - 1]
                                                                    ofType:@"jpg" andFrame:[ImageFrame FrameWithOrdernumber:i]];
         
-        [singleImageView setUserInteractionEnabled:YES];
-        [singleImageView.layer setBorderWidth:5.0f];
-        [singleImageView.layer setBorderColor:[UIColor whiteColor].CGColor];
-        [self addGestureRecognizersWithView:singleImageView];
+        [cellImageView setTag:i];
+        [cellImageView setUserInteractionEnabled:YES];
+        [cellImageView.layer setBorderWidth:5.0f];
+        [cellImageView.layer setBorderColor:[UIColor whiteColor].CGColor];
+        [self addGestureRecognizersWithView:cellImageView];
         
-        [self.smallPhotoScrollView insertSubview:singleImageView atIndex:0];
-        CGFloat scrHeight = Y_OFF_SET + ceil((float)array.count/PAGE_COL)  *  ySpacing;
+        [self.smallPhotoScrollView insertSubview:cellImageView atIndex:0];
+        CGFloat scrHeight = Y_OFF_SET + ceil((float)self.photoArray.count/PAGE_COL)  *  ySpacing;
         [self.smallPhotoScrollView setContentSize:CGSizeMake(LANDSCAPE_WIDTH, scrHeight)];
     }
     
@@ -92,14 +108,11 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 
 -(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
-    
     return YES;
-    
 }
 
 -(BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
-    
     return YES;
 }
 
@@ -246,7 +259,7 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
                 
                 [view setHidden:YES];
                 
-                [self presentPhotoView];
+                [self presentPhotoView:view.tag];
                 
                 view.transform = CGAffineTransformMakeScale(1, 1);
                 [view.layer setBorderWidth:15.0f];
@@ -303,12 +316,18 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
     
 }
 
-- (void)presentPhotoView
+- (void)presentPhotoView:(NSInteger)cellViewTag
 {
-    NSLog(@"The imageView center is %@", NSStringFromCGPoint(self.imageView.center));
-    //[self.bigPhotoScrollerViewController setSelectedCellOriginalPos:self.imageView.center];
+    CGRect toFrame = CGRectMake(
+                                 self.bigPhotoScrollerViewController.scrollView.frame.size.width*cellViewTag-1, 0,
+                                 self.bigPhotoScrollerViewController.scrollView.frame.size.width,
+                                 self.bigPhotoScrollerViewController.scrollView.frame.size.height);
+
+    
+    [self.bigPhotoScrollerViewController.scrollView scrollRectToVisible:toFrame animated:YES];
     
     [self.view addSubview:self.bigPhotoScrollerViewController.view];
+
 }
 
 - (void)transformingGestureDidFinishWithGesture:(UIGestureRecognizer *)recognizer
@@ -360,6 +379,8 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
         
     }else if ([recognizer isKindOfClass:[UITapGestureRecognizer class]]) {
         
+        UIView *view = recognizer.view;
+        
         [UIView animateWithDuration:kDefaultAnimationDuration
                               delay:0
                             options:kDefaultAnimationOptions
@@ -371,7 +392,7 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
                                                  options:kDefaultAnimationOptions
                                               animations:^{
                                                   
-                                                  [self presentPhotoView];
+                                                  [self presentPhotoView:view.tag];
                                                   
                                               }
                                               completion:nil
@@ -384,22 +405,6 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
         
     }
     
-}
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    
-    [self.view setBackgroundColor:[UIColor blackColor]];
-    
-    UIScrollView *smallPhotoScrollView = [[UIScrollView alloc]
-                                          initWithFrame:CGRectMake(0, 0, LANDSCAPE_WIDTH, LANDSCAPE_HEIGHT)];
-    self.smallPhotoScrollView = smallPhotoScrollView;
-    [self.view addSubview:self.smallPhotoScrollView];
-    
-    self.bigPhotoScrollerViewController = [[PhotoScrollerViewController alloc] init];
-    [self.bigPhotoScrollerViewController.view
-     setFrame:CGRectMake(0, 0, LANDSCAPE_WIDTH, LANDSCAPE_HEIGHT)];
 }
 
 - (void)didReceiveMemoryWarning

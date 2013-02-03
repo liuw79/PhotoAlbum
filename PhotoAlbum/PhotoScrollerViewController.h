@@ -15,8 +15,12 @@
 
 @interface PhotoScrollerViewController : UIViewController<UIScrollViewDelegate, UIGestureRecognizerDelegate>
 
-@property(nonatomic,readwrite)CGPoint selectedCellOriginalPos;
+@property CGPoint selectedCellOriginalPos;
 @property(nonatomic,assign)id<PhotoViewDelegate>photoDelegate;
+@property (strong, nonatomic) UIScrollView *scrollView;
+
+- (void)tilePages;
+
 @end
 
 @protocol PhotoViewDelegate <NSObject>
