@@ -27,6 +27,7 @@
 - (void)photoViewDisappear:(BOOL)value;
 - (void)animateImageViewBackToNormal:(UIImageView *)imageView WithPosition:(CGPoint)point;
 - (void)moveImageView:(UIImageView *)imageView ToPosition:(CGPoint)point;
+- (void)photoHiddenSwitch:(int)newIndex;
 
 @end
 

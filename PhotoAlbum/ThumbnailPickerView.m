@@ -269,7 +269,7 @@ static const NSUInteger kBigThumbnailTagOffset = 1000;
                 if (index == self.selectedIndex) {
                     self.bigThumbnailImageView.image = image;
                     float width = kBigThumbnailSize.height*image.size.width/image.size.height;
-                    float span = (kBigThumbnailSize.width - width)/2.0;
+                    //float span = (kBigThumbnailSize.width - width)/2.0;
                     
                     CGRect rect = CGRectMake(self.bigThumbnailImageView.frame.origin.x, self.bigThumbnailImageView.frame.origin.y, width, kBigThumbnailSize.height);
                     [self.bigThumbnailImageView setFrame:rect];
@@ -340,7 +340,7 @@ static const NSUInteger kBigThumbnailTagOffset = 1000;
                 dispatch_async(dispatch_get_main_queue(),^{
                     self.bigThumbnailImageView.image = image;
                     float width = kBigThumbnailSize.height*image.size.width/image.size.height;
-                    float span = (kBigThumbnailSize.width - width)/2.0;
+                    //float span = (kBigThumbnailSize.width - width)/2.0;
                     
                     CGRect rect = CGRectMake(self.bigThumbnailImageView.frame.origin.x, self.bigThumbnailImageView.frame.origin.y, width, kBigThumbnailSize.height);
                     [self.bigThumbnailImageView setFrame:rect];

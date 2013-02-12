@@ -15,7 +15,7 @@
 {
     NSMutableArray *tmpArray = [[NSMutableArray alloc] initWithCapacity:58];
     
-    for (int i = 1; i <= 58; ++ i)
+    for (int i = 0; i <= 57; ++ i)
     {
         @autoreleasepool {
             NSString *tmpString = [NSString stringWithFormat:

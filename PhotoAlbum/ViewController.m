@@ -14,6 +14,7 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 
 @interface ViewController ()
 
+@property (nonatomic, readwrite) int currentHiddenIndex;
 @property (nonatomic, strong) NSArray *photoArray;
 @property (nonatomic, strong) PhotoScrollerViewController *bigPhotoScrollerViewController;
 @property (nonatomic, strong) UIImage *image;
@@ -36,45 +37,135 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 
 @implementation ViewController
 
+- (void)animateImageViewBackToNormal:(UIImageView *)imageView WithPosition:(CGPoint)point
+{
+    UIView *view = [self.smallPhotoScrollView viewWithTag:imageView.tag];
+    [view setHidden:NO];
+    NSLog(@"View tag: %d, Hidden small photo %@",imageView.tag, view);
+}
+
+//大图切换，改变当前隐藏的小图
+- (void)photoHiddenSwitch:(int)newIndex
+{
+    UIView *view = [self.smallPhotoScrollView viewWithTag:self.currentHiddenIndex];
+    [view setHidden:NO];
+    
+    UIView *nextView = [self.smallPhotoScrollView viewWithTag:newIndex];
+    [nextView setHidden:YES];
+    
+    self.currentHiddenIndex = newIndex;
+}
+
+- (void)loadView
+{
+    self.view = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
     self.photoArray = [ImageList GetImageList];
-    
+    [self.view setFrame:[UIScreen mainScreen].bounds];
+//    NSLog(@"vc frame did load: %@", NSStringFromCGRect(self.view.frame));     //TEST
     [self.view setBackgroundColor:[UIColor blackColor]];
     
-    UIScrollView *smallPhotoScrollView = [[UIScrollView alloc]
-                                          initWithFrame:CGRectMake(0, 0, LANDSCAPE_WIDTH, LANDSCAPE_HEIGHT)];
-    self.smallPhotoScrollView = smallPhotoScrollView;
+    self.smallPhotoScrollView = [[UIScrollView alloc] initWithFrame:self.view.frame];
+    [self.smallPhotoScrollView setBackgroundColor:[UIColor blackColor]];
     [self.view addSubview:self.smallPhotoScrollView];
     
     self.bigPhotoScrollerViewController = [[PhotoScrollerViewController alloc] init];
-    [self.bigPhotoScrollerViewController.scrollView setContentSize:CGSizeMake(LANDSCAPE_WIDTH * self.photoArray.count, self.bigPhotoScrollerViewController.scrollView.frame.size.height)];
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
+    [self.bigPhotoScrollerViewController setPhotoDelegate:self];
+    [self.bigPhotoScrollerViewController.scrollView
+     setContentSize:CGSizeMake(self.view.frame.size.width * self.photoArray.count,
+                               self.view.frame.size.height)];
     
-    for (int i = 1; i <= self.photoArray.count; ++ i)
+    for (int i = 0; i <= self.photoArray.count - 1; ++ i)
     {
         MyImageView *cellImageView
-        = [[MyImageView alloc] initWithImageName:[self.photoArray objectAtIndex:i - 1]
-                                                                   ofType:@"jpg" andFrame:[ImageFrame FrameWithOrdernumber:i]];
+        = [[MyImageView alloc] initWithImageName:[self.photoArray objectAtIndex:i]
+                                          ofType:@"jpg" andFrame:[ImageFrame FrameWithOrdernumberPortrait:i]];
         
         [cellImageView setTag:i];
         [cellImageView setUserInteractionEnabled:YES];
         [cellImageView.layer setBorderWidth:5.0f];
         [cellImageView.layer setBorderColor:[UIColor whiteColor].CGColor];
         [self addGestureRecognizersWithView:cellImageView];
-        
-        [self.smallPhotoScrollView insertSubview:cellImageView atIndex:0];
-        CGFloat scrHeight = Y_OFF_SET + ceil((float)self.photoArray.count/PAGE_COL)  *  ySpacing;
-        [self.smallPhotoScrollView setContentSize:CGSizeMake(LANDSCAPE_WIDTH, scrHeight)];
+            
+        [self.smallPhotoScrollView addSubview:cellImageView];
     }
     
-    [self.navigationController setNavigationBarHidden:YES];
+    [self RenewSmallPhotoScrollViewFrame];
+    [self RenewSmallPhotoViewFrame:[UIApplication sharedApplication].statusBarOrientation];
+    [self RenewSmallPhotoScrollViewContentsize];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+}
+
+//准备旋转
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
+{
+    [self RenewSmallPhotoViewFrame:toInterfaceOrientation];
+}
+
+//旋转完毕
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    [self.smallPhotoScrollView setFrame:self.view.frame];
+    
+    [self RenewSmallPhotoScrollViewContentsize];
+}
+
+//更新contentsize
+- (void)RenewSmallPhotoScrollViewContentsize
+{
+    CGFloat scrHeight;
+    if ( UIInterfaceOrientationIsPortrait([UIApplication sharedApplication].statusBarOrientation) )
+    {
+        scrHeight = Y_OFF_SET_PORTRAIT + ceil((float)self.photoArray.count/PAGE_COL_PORTRAIT)  *  ySpacing_PORTRAIT;
+    }
+    else
+    {
+        scrHeight = Y_OFF_SET_LANDSCAPE + ceil((float)self.photoArray.count/PAGE_COL_LANDSCAPE) * ySpacing_LANDSCAPE;
+    }
+    
+    [self.smallPhotoScrollView setContentSize:CGSizeMake(self.view.frame.size.width, scrHeight)];
+}
+
+//更新ScrollView和里面每个小图的frame
+- (void)RenewSmallPhotoViewFrame:(UIInterfaceOrientation)toInterfaceOrientation
+{
+    for (int i = 1; i <= self.photoArray.count; ++ i) {
+        UIView *view = [self.view viewWithTag:i];
+        
+        if (UIInterfaceOrientationIsPortrait(toInterfaceOrientation))
+        {
+            [view setFrame:[ImageFrame FrameWithOrdernumberPortrait:i]];
+        }
+        else
+        {
+            [view setFrame:[ImageFrame FrameWithOrdernumberLandscape:i]];
+        }
+    }
+}
+
+//更新ScrollView的Frame
+- (void)RenewSmallPhotoScrollViewFrame
+{
+    UIInterfaceOrientation InterfaceOrientation = [UIApplication sharedApplication].statusBarOrientation;
+    
+    
+    if (UIInterfaceOrientationIsPortrait(InterfaceOrientation))
+    {
+        [self.smallPhotoScrollView setFrame:CGRectMake(0, 0, 768, 1004)];
+    }
+    else
+    {
+        [self.smallPhotoScrollView setFrame:CGRectMake(0, 0, 1024, 748)];
+    }
 }
 
 //**********************添加拖动，捏合和点击的手势识别*****************//
@@ -118,11 +209,8 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 
 - (void)tapGestureUpdated:(UITapGestureRecognizer *)tapGesture
 {
-    NSLog(@"tapGestureUpdated");
     
-    [self.view bringSubviewToFront:tapGesture.view];
-    
-    NSLog(@"tapGesture view:%@", NSStringFromCGRect(tapGesture.view.frame));
+    [self.smallPhotoScrollView bringSubviewToFront:tapGesture.view];
     
     switch (tapGesture.state) {
         case UIGestureRecognizerStateEnded:
@@ -150,9 +238,9 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 
 - (void)rotateGestureUpdated: (UIRotationGestureRecognizer *)rotateGesture
 {
-    NSLog(@"rotateGestureUpdated");
     
-    [self.view bringSubviewToFront:rotateGesture.view];
+    [self.smallPhotoScrollView bringSubviewToFront:rotateGesture.view];
+    
     UIView *view = rotateGesture.view;
     switch (rotateGesture.state) {
         case UIGestureRecognizerStateEnded:
@@ -198,7 +286,7 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 {
     NSLog(@"pan GestureUpdated");
 
-    [self.view bringSubviewToFront:panGesture.view];
+    [self.smallPhotoScrollView bringSubviewToFront:panGesture.view];
     UIView *view = panGesture.view;
     
     switch (panGesture.state) {
@@ -236,9 +324,7 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 
 -(void)pinchGestureUpdated:(UIPinchGestureRecognizer *)pinchGesture
 {
-    NSLog(@"pinch GestureUpdated");
-    [self.view bringSubviewToFront:pinchGesture.view];
-    NSLog(@"pinch view:%@", self.view);
+    [self.smallPhotoScrollView bringSubviewToFront:pinchGesture.view];
     
     UIView *view = pinchGesture.view;
     
@@ -258,6 +344,8 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
             }else {
                 
                 [view setHidden:YES];
+                self.currentHiddenIndex = view.tag;
+                NSLog(@"ViewController pinch view tag %d, %@",view.tag, view);
                 
                 [self presentPhotoView:view.tag];
                 

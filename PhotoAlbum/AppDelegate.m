@@ -19,15 +19,14 @@
     // Override point for customization after application launch.
     
     self.viewController = [[ViewController alloc] init];
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:self.viewController];
-    [nav setTitle:@"PhotoAlbum"];
-    [nav.navigationBar setBarStyle:UIBarStyleBlackOpaque];
-    
-    self.window.rootViewController = nav;
-    nav = nil;
+    self.nav = [[UINavigationController alloc] initWithRootViewController:self.viewController];
+    [self.nav setNavigationBarHidden:YES];
+    self.window.rootViewController = self.nav;
     [self.window makeKeyAndVisible];
     return YES;
 }
+
+
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {

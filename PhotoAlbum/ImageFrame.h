@@ -11,6 +11,7 @@
 
 @interface ImageFrame : NSObject
 
-+ (CGRect)FrameWithOrdernumber:(NSInteger)orderNum;
++ (CGRect)FrameWithOrdernumberLandscape:(NSInteger)orderNum;
++ (CGRect)FrameWithOrdernumberPortrait:(NSInteger)orderNum;
 
 @end
