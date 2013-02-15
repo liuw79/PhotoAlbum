@@ -43,7 +43,7 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
         self.photoArray = [ImageList GetImageList];
         
         //建立图片ScrollView
-        CGRect photoScrFrame = CGRectMake(0, 0, LANDSCAPE_WIDTH, LANDSCAPE_HEIGHT);
+        CGRect photoScrFrame = self.view.frame;
         UIScrollView *photoScr = [[UIScrollView alloc] initWithFrame:photoScrFrame];
         [photoScr setPagingEnabled:YES];
         [photoScr setDirectionalLockEnabled:YES];
@@ -56,6 +56,19 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
         [self.view addSubview:self.scrollView];     //TEST
         NSLog(@"PhotoScrollerViewController  init scrollView:%@", self.scrollView);   //TEST
         photoScr = nil;
+        
+        //初始化复用相关SET
+        self.recycledPages = [[NSMutableSet alloc] init];
+        self.visiblePages = [[NSMutableSet alloc] init];
+        
+        //根据需要创建图片对象
+        [self tilePages];
+        
+        //缩略图ToolBar
+        self.toolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 728, 1024, 40)];          //TEST
+        self.pickerView = [[ThumbnailPickerView alloc] init];
+        [self.toolBar addSubview:self.pickerView];
+        [self.view addSubview:self.toolBar];
     }
     return self;
 }
@@ -78,24 +91,43 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
     return pageFrame;
 }
 
-- (void)loadView
+//准备旋转
+- (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
-    self.view  = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 1024, 768)];
-    //[self.view setBackgroundColor:[UIColor blueColor]];
-    NSLog(@"PhotoScrollerViewController frame:%@  (LoadView)", NSStringFromCGRect(self.view.frame));
+    [self renewContentsViewSize:toInterfaceOrientation];
+}
 
-    //初始化复用相关SET
-    self.recycledPages = [[NSMutableSet alloc] init];
-    self.visiblePages = [[NSMutableSet alloc] init];
+//旋转完毕
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
+{
+    [self renewContentsViewSize:-1];
+}
+
+- (void)renewContentsViewSize:(UIInterfaceOrientation)toOrientation
+{
+    CGFloat scrWidth;
+    CGFloat scrHeight;
     
-    //根据需要创建图片对象
-    [self tilePages];
+    if (-1 == toOrientation) {
+        toOrientation =[UIApplication sharedApplication].statusBarOrientation;
+    }
     
-    //缩略图ToolBar
-    self.toolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 728, 1024, 40)];          //TEST
-    self.pickerView = [[ThumbnailPickerView alloc] init];
-    [self.toolBar addSubview:self.pickerView];
-    [self.view addSubview:self.toolBar];
+    if ( UIInterfaceOrientationIsPortrait(toOrientation) )
+    {
+        self.view.frame = CGRectMake(0, 0, kPORTRAIT_WIDTH, kPORTRAIT_HEIGHT - 40);
+        self.scrollView.frame = CGRectMake(0, 0, kPORTRAIT_WIDTH, kPORTRAIT_HEIGHT - 40);
+        scrWidth = kPORTRAIT_WIDTH * self.photoArray.count;
+        scrHeight = kPORTRAIT_HEIGHT - 40;
+    }
+    else
+    {
+        self.view.frame = CGRectMake(0, 0, kLANDSCAPE_WIDTH, kLANDSCAPE_HEIGHT - 40);
+        self.scrollView.frame = CGRectMake(0, 0, kLANDSCAPE_WIDTH, kLANDSCAPE_HEIGHT - 40);
+        scrWidth = kLANDSCAPE_WIDTH * self.photoArray.count;
+        scrHeight = kLANDSCAPE_HEIGHT - 40;
+    }
+    
+    [self.scrollView setContentSize:CGSizeMake(scrWidth, scrHeight)];
 }
 
 - (void)viewDidLoad
@@ -110,7 +142,6 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 
 - (void)viewWillAppear:(BOOL)animated
 {
-   // [self.scrollView scrollRectToVisible:CGRectMake(1024*3, 0, 1024, <#CGFloat height#>) animated:<#(BOOL)#>]
 }
 
 - (void)tilePages
@@ -141,9 +172,9 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
         {
             MyImageView *imageView = [self dequeueRecyclePage];
             if (nil == imageView) {
-                imageView = [[MyImageView alloc] initWithFrame:CGRectMake(0, 0, LANDSCAPE_WIDTH, LANDSCAPE_HEIGHT)];
+                imageView = [[MyImageView alloc] initWithFrame:CGRectMake(0, 0, kLANDSCAPE_WIDTH, kLANDSCAPE_HEIGHT - 40)];
                 [imageView setAutoresizingMask: UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight];
-                
+                [imageView setBackgroundColor:[UIColor blackColor]];
                 [self addGestureRecognizersWithView:imageView];
             }
             
@@ -217,10 +248,6 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 {
     //计算哪页是当前显示页面
     CGRect visibleBounds = self.scrollView.bounds;
-    
-    NSLog(@"CGRectGetMinX(visibleBounds):%f", CGRectGetMinX(visibleBounds));
-    NSLog(@"CGRectGetWidth(visibleBounds):%f", CGRectGetWidth(visibleBounds));
-    NSLog(@"CGRectGetMinX(visibleBounds)/CGRectGetWidth(visibleBounds):%f", CGRectGetMinX(visibleBounds)/CGRectGetWidth(visibleBounds));
     
     int pageIndex = roundf(CGRectGetMinX(visibleBounds)/CGRectGetWidth(visibleBounds));
     
@@ -303,7 +330,6 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 
 - (void)pinchGestureUpdated:(UIPinchGestureRecognizer *)pinchGesture
 {
-    
     UIView *view = pinchGesture.view;
     
     switch (pinchGesture.state) {

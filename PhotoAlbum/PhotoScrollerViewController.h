@@ -20,6 +20,7 @@
 @property (strong, nonatomic) UIScrollView *scrollView;
 
 - (void)tilePages;
+- (void)renewContentsViewSize:(UIInterfaceOrientation)toOrientation;
 
 @end
 

@@ -41,7 +41,7 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 {
     UIView *view = [self.smallPhotoScrollView viewWithTag:imageView.tag];
     [view setHidden:NO];
-    NSLog(@"View tag: %d, Hidden small photo %@",imageView.tag, view);
+
 }
 
 //大图切换，改变当前隐藏的小图
@@ -65,9 +65,10 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 {
     [super viewDidLoad];
     
+    self.title = @"Photo Album";
+    
+    [self.view setFrame:[self getStartFrame]];
     self.photoArray = [ImageList GetImageList];
-    [self.view setFrame:[UIScreen mainScreen].bounds];
-//    NSLog(@"vc frame did load: %@", NSStringFromCGRect(self.view.frame));     //TEST
     [self.view setBackgroundColor:[UIColor blackColor]];
     
     self.smallPhotoScrollView = [[UIScrollView alloc] initWithFrame:self.view.frame];
@@ -95,7 +96,6 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
         [self.smallPhotoScrollView addSubview:cellImageView];
     }
     
-    [self RenewSmallPhotoScrollViewFrame];
     [self RenewSmallPhotoViewFrame:[UIApplication sharedApplication].statusBarOrientation];
     [self RenewSmallPhotoScrollViewContentsize];
 }
@@ -103,6 +103,25 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    NSLog(@"view frame:%@", NSStringFromCGRect(self.view.frame));
+    NSLog(@"scr frame:%@", NSStringFromCGRect(self.smallPhotoScrollView.frame));
+}
+
+//获取初始frame
+- (CGRect)getStartFrame
+{
+    CGRect frame;
+    
+    if ( UIInterfaceOrientationIsPortrait([UIApplication sharedApplication].statusBarOrientation) )
+    {
+        frame = CGRectMake(0, 0, kPORTRAIT_WIDTH, kPORTRAIT_HEIGHT);
+    }
+    else
+    {
+        frame = CGRectMake(0, 0, kLANDSCAPE_WIDTH, kLANDSCAPE_HEIGHT);
+    }
+    
+    return frame;
 }
 
 //准备旋转
@@ -160,11 +179,13 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
     
     if (UIInterfaceOrientationIsPortrait(InterfaceOrientation))
     {
-        [self.smallPhotoScrollView setFrame:CGRectMake(0, 0, 768, 1004)];
+        //[self.smallPhotoScrollView setFrame:CGRectMake(0, 0, 768, 1004)];
+        [self.smallPhotoScrollView setFrame:CGRectMake(0, 0, kPORTRAIT_WIDTH, kPORTRAIT_HEIGHT)];
     }
     else
     {
-        [self.smallPhotoScrollView setFrame:CGRectMake(0, 0, 1024, 748)];
+        //[self.smallPhotoScrollView setFrame:CGRectMake(0, 0, 1024, 748)];
+        [self.smallPhotoScrollView setFrame:CGRectMake(0, 0, kLANDSCAPE_WIDTH, kLANDSCAPE_HEIGHT)];
     }
 }
 
@@ -343,11 +364,8 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
                 
             }else {
                 
-                [view setHidden:YES];
-                self.currentHiddenIndex = view.tag;
-                NSLog(@"ViewController pinch view tag %d, %@",view.tag, view);
-                
                 [self presentPhotoView:view.tag];
+                NSLog(@"pinch view tag:%d", view.tag);  //TEST
                 
                 view.transform = CGAffineTransformMakeScale(1, 1);
                 [view.layer setBorderWidth:15.0f];
@@ -406,14 +424,20 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 
 - (void)presentPhotoView:(NSInteger)cellViewTag
 {
+    UIView *view = [self.smallPhotoScrollView viewWithTag:cellViewTag];
+    [view setHidden:YES];
+    self.currentHiddenIndex = view.tag;
+    
     CGRect toFrame = CGRectMake(
                                  self.bigPhotoScrollerViewController.scrollView.frame.size.width*cellViewTag-1, 0,
                                  self.bigPhotoScrollerViewController.scrollView.frame.size.width,
                                  self.bigPhotoScrollerViewController.scrollView.frame.size.height);
 
     
-    [self.bigPhotoScrollerViewController.scrollView scrollRectToVisible:toFrame animated:YES];
-    
+    [self.bigPhotoScrollerViewController.scrollView scrollRectToVisible:toFrame animated:NO];
+    [self.bigPhotoScrollerViewController renewContentsViewSize:[UIApplication sharedApplication].statusBarOrientation];
+    [self.bigPhotoScrollerViewController.scrollView setTransform:CGAffineTransformMakeScale(1.0, 1.0)];
+    [self.bigPhotoScrollerViewController.scrollView setTransform:CGAffineTransformRotate(self.bigPhotoScrollerViewController.scrollView.transform, 0.0)];
     [self.view addSubview:self.bigPhotoScrollerViewController.view];
 
 }
@@ -481,7 +505,7 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
                                               animations:^{
                                                   
                                                   [self presentPhotoView:view.tag];
-                                                  
+                                                  NSLog(@"tap view tag:%d", view.tag);  //TEST
                                               }
                                               completion:nil
                               ];
