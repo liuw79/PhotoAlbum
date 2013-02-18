@@ -13,7 +13,7 @@
 static const CGFloat kDefaultAnimationDuration = 0.3;
 static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction;
 
-@interface PhotoScrollerViewController ()
+@interface PhotoScrollerViewController ()<ThumbnailPickerViewDataSource, ThumbnailPickerViewDelegate>
 
 @property (strong, nonatomic) NSArray *photoArray;
 @property (strong, nonatomic) NSNumber *currentImage;
@@ -28,7 +28,7 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 @property(nonatomic,readwrite)CGFloat deltaScale;
 @property(nonatomic,readwrite)CGFloat lastRotation;
 @property(nonatomic,readwrite)CGPoint lastPosition;
-@property(nonatomic,retain)ThumbnailPickerView *pickerView;
+@property (strong, nonatomic) ThumbnailPickerView *thumbnailPickerView;
 @property(nonatomic,retain)UIToolbar *toolBar;
 
 @end
@@ -65,9 +65,11 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
         [self tilePages];
         
         //缩略图ToolBar
-        self.toolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 728, 1024, 40)];          //TEST
-        self.pickerView = [[ThumbnailPickerView alloc] init];
-        [self.toolBar addSubview:self.pickerView];
+        self.toolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 660, 1024, 44)];          //TEST
+        [self.toolBar setBackgroundColor:[UIColor blackColor]];
+        self.thumbnailPickerView = [[ThumbnailPickerView alloc] initWithFrame:CGRectMake(0, 0, 1024, 44)];
+        [self.thumbnailPickerView setBackgroundColor:[UIColor blueColor]];
+        [self.toolBar addSubview:self.thumbnailPickerView];
         [self.view addSubview:self.toolBar];
     }
     return self;
@@ -551,6 +553,34 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
         
     }
     
+}
+
+#pragma mark - Private API about ThumbnailPickerView
+
+- (void)_updateUIWithSelectedIndex:(NSUInteger)index
+{
+    self.imageView.image = [UIImage imageNamed:[self.photoArray objectAtIndex:index]];
+}
+
+#pragma mark - ThumbnailPickerView data source
+
+- (NSUInteger)numberOfImagesForThumbnailPickerView:(ThumbnailPickerView *)thumbnailPickerView
+{
+    return self.photoArray.count;
+}
+
+- (UIImage *)thumbnailPickerView:(ThumbnailPickerView *)thumbnailPickerView imageAtIndex:(NSUInteger)index
+{
+    UIImage *image = [UIImage imageNamed:[self.photoArray objectAtIndex:index]];
+    usleep(10*1000);
+    return image;
+}
+
+#pragma mark - ThumbnailPickerView delegate
+
+- (void)thumbnailPickerView:(ThumbnailPickerView *)thumbnailPickerView didSelectImageWithIndex:(NSUInteger)index
+{
+    [self _updateUIWithSelectedIndex:index];
 }
 
 - (void)didReceiveMemoryWarning
