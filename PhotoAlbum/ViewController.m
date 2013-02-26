@@ -29,7 +29,6 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 @property (nonatomic,readwrite) CGFloat preScale;
 @property (nonatomic,readwrite) CGFloat deltaScale;
 @property (nonatomic,readwrite) CGFloat lastRotation;
-@property (nonatomic,retain) PhotoScrollerViewController *photoViewController;
 
 - (void)presentPhotoView;
 
@@ -59,6 +58,34 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 - (void)loadView
 {
     self.view = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+}
+
+- (void)presentPhotoView:(NSInteger)cellViewTag
+{
+    UIView *view = [self.smallPhotoScrollView viewWithTag:cellViewTag];
+    [view setHidden:YES];
+    self.currentHiddenIndex = view.tag;
+    
+    //**********重置 ScrollView 的 Scale 和 Rotate值,以及 ToolBar 的 alpha值*******************//
+    self.bigPhotoScrollerViewController.scrollView.transform = CGAffineTransformMakeScale(1.0, 1.0);
+    self.bigPhotoScrollerViewController.scrollView.transform = CGAffineTransformRotate(self.bigPhotoScrollerViewController.scrollView.transform, 0.0);
+    self.bigPhotoScrollerViewController.toolBar.alpha = 1.0;
+    
+    [self.bigPhotoScrollerViewController.view setFrame:self.view.frame];
+//    NSLog(@"vc presentPhotoView self.view1111: %@", NSStringFromCGRect(self.view.frame));
+//    NSLog(@"vc presentPhotoView bigPhoto2222: %@",NSStringFromCGRect(self.bigPhotoScrollerViewController.view.frame));
+    
+    CGRect toFrame = CGRectMake(
+                                self.bigPhotoScrollerViewController.scrollView.frame.size.width*cellViewTag-1, 0,
+                                self.bigPhotoScrollerViewController.scrollView.frame.size.width,
+                                self.bigPhotoScrollerViewController.scrollView.frame.size.height);
+    
+    [self.bigPhotoScrollerViewController.scrollView scrollRectToVisible:toFrame animated:NO];
+    [self.bigPhotoScrollerViewController renewContentsViewSize:[UIApplication sharedApplication].statusBarOrientation];
+    [self.bigPhotoScrollerViewController.scrollView setTransform:CGAffineTransformMakeScale(1.0, 1.0)];
+    [self.bigPhotoScrollerViewController.scrollView setTransform:CGAffineTransformRotate(self.bigPhotoScrollerViewController.scrollView.transform, 0.0)];
+    [self.view addSubview:self.bigPhotoScrollerViewController.view];
+    
 }
 
 - (void)viewDidLoad
@@ -98,13 +125,15 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
     
     [self RenewSmallPhotoViewFrame:[UIApplication sharedApplication].statusBarOrientation];
     [self RenewSmallPhotoScrollViewContentsize];
+    
+//    NSLog(@"vc of didLoad: %@", NSStringFromCGRect(self.view.frame));
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    NSLog(@"view frame:%@", NSStringFromCGRect(self.view.frame));
-    NSLog(@"scr frame:%@", NSStringFromCGRect(self.smallPhotoScrollView.frame));
+//    NSLog(@"root frame:%@", NSStringFromCGRect(self.view.frame));
+//    NSLog(@"root's scr frame:%@", NSStringFromCGRect(self.smallPhotoScrollView.frame));
 }
 
 //获取初始frame
@@ -422,26 +451,6 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
     
 }
 
-- (void)presentPhotoView:(NSInteger)cellViewTag
-{
-    UIView *view = [self.smallPhotoScrollView viewWithTag:cellViewTag];
-    [view setHidden:YES];
-    self.currentHiddenIndex = view.tag;
-    
-    CGRect toFrame = CGRectMake(
-                                 self.bigPhotoScrollerViewController.scrollView.frame.size.width*cellViewTag-1, 0,
-                                 self.bigPhotoScrollerViewController.scrollView.frame.size.width,
-                                 self.bigPhotoScrollerViewController.scrollView.frame.size.height);
-
-    
-    [self.bigPhotoScrollerViewController.scrollView scrollRectToVisible:toFrame animated:NO];
-    [self.bigPhotoScrollerViewController renewContentsViewSize:[UIApplication sharedApplication].statusBarOrientation];
-    [self.bigPhotoScrollerViewController.scrollView setTransform:CGAffineTransformMakeScale(1.0, 1.0)];
-    [self.bigPhotoScrollerViewController.scrollView setTransform:CGAffineTransformRotate(self.bigPhotoScrollerViewController.scrollView.transform, 0.0)];
-    [self.view addSubview:self.bigPhotoScrollerViewController.view];
-
-}
-
 - (void)transformingGestureDidFinishWithGesture:(UIGestureRecognizer *)recognizer
 {
     if ([recognizer isKindOfClass:[UIRotationGestureRecognizer class]]) {
@@ -505,7 +514,7 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
                                               animations:^{
                                                   
                                                   [self presentPhotoView:view.tag];
-                                                  NSLog(@"tap view tag:%d", view.tag);  //TEST
+                                                  //NSLog(@"tap view tag:%d", view.tag);  //TEST
                                               }
                                               completion:nil
                               ];

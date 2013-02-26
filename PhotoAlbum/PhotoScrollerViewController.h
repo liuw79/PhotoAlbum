@@ -15,10 +15,11 @@
 
 @interface PhotoScrollerViewController : UIViewController<UIScrollViewDelegate, UIGestureRecognizerDelegate>
 
-@property (copy, nonatomic) NSMutableArray *images;
+@property (strong, nonatomic) NSMutableArray *images;
 @property CGPoint selectedCellOriginalPos;
 @property(nonatomic,assign)id<PhotoViewDelegate>photoDelegate;
 @property (strong, nonatomic) UIScrollView *scrollView;
+@property(nonatomic,retain)UIToolbar *toolBar;
 
 - (void)tilePages;
 - (void)renewContentsViewSize:(UIInterfaceOrientation)toOrientation;

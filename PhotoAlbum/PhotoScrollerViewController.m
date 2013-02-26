@@ -29,7 +29,6 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 @property(nonatomic,readwrite)CGFloat lastRotation;
 @property(nonatomic,readwrite)CGPoint lastPosition;
 @property (strong, nonatomic) ThumbnailPickerView *thumbnailPickerView;
-@property(nonatomic,retain)UIToolbar *toolBar;
 
 @end
 
@@ -55,7 +54,7 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
         [photoScr setDelegate:self];
         self.scrollView = photoScr;
         [self.view addSubview:self.scrollView];     //TEST
-        NSLog(@"PhotoScrollerViewController  init scrollView:%@", self.scrollView);   //TEST
+        //NSLog(@"PhotoScrollerViewController  init scrollView:%@", self.scrollView);   //TEST
         photoScr = nil;
         
         //初始化复用相关SET
@@ -69,25 +68,33 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
         //填充images数组
         for (int i = 0; i < self.photoArray.count; i ++) {
             NSString *filepath = [[NSBundle mainBundle] pathForResource:[self.photoArray objectAtIndex:i] ofType:@"jpg"];
-            NSLog(@"filepath1111: %@", filepath);
+            //NSLog(@"filepath1111: %@", filepath);
             UIImage *image = [UIImage imageWithContentsOfFile:filepath];
             [self.images addObject:image];
         }
-        NSLog(@"image array: %@", self.images);
+        //NSLog(@"image array: %@", self.images);
         
         //缩略图ToolBar
-        self.toolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 22, self.view.frame.size.width, 44)];          //TEST
+        //NSLog(@"photo vc view: %@", NSStringFromCGRect(self.view.frame));   //TEST
+        self.toolBar = [[UIToolbar alloc] init];
         [self.toolBar setBarStyle:UIBarStyleBlack];
-        self.thumbnailPickerView = [[ThumbnailPickerView alloc] initWithFrame:CGRectMake(0, 0, self.toolBar.bounds.size.width, self.toolBar.bounds.size.height)];
+        self.thumbnailPickerView = [[ThumbnailPickerView alloc] init];
         [self.thumbnailPickerView setDelegate:self];
         [self.thumbnailPickerView setDataSource:self];
-        [self.thumbnailPickerView setBackgroundColor:[UIColor blueColor]];
         [self.toolBar addSubview:self.thumbnailPickerView];
         [self.view addSubview:self.toolBar];
         
-
+        //NSLog(@"Photo vc init view: %@", NSStringFromCGRect(self.view.frame));
     }
     return self;
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [self.toolBar setFrame:CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, 44)];
+    [self.thumbnailPickerView setFrame:CGRectMake(0, 0, self.toolBar.bounds.size.width, self.toolBar.bounds.size.height)];
+    NSLog(@"Photo vc willappear toolbar: %@", NSStringFromCGRect(self.toolBar.frame));
+    NSLog(@"Photo vc willappear view: %@", NSStringFromCGRect(self.view.frame));
 }
 
 - (void)configurePage:(MyImageView *)imageView forIndex:(int)index
@@ -149,6 +156,7 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    // NSLog(@"Photo vc didLoad view: %@", NSStringFromCGRect(self.view.frame));
 }
 
 
@@ -565,7 +573,8 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 
 - (void)_updateUIWithSelectedIndex:(NSUInteger)index
 {
-    self.imageView.image = [UIImage imageNamed:[self.photoArray objectAtIndex:index]];
+    //self.imageView.image = [UIImage imageNamed:[self.photoArray objectAtIndex:index]];
+    NSLog(@"index: %d", index);
 }
 
 #pragma mark - ThumbnailPickerView data source
@@ -577,10 +586,8 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 
 - (UIImage *)thumbnailPickerView:(ThumbnailPickerView *)thumbnailPickerView imageAtIndex:(NSUInteger)index
 {
-    //NSLog(@"imagename %@", [self.photoArray objectAtIndex:index]);
-    UIImage *image = [UIImage imageNamed:[[self.photoArray objectAtIndex:index] stringByAppendingString:@".jpg"]];
-    //UIImage *image = [UIImage imageNamed:@"image002.jpg"];
-    NSLog(@"PhotoScrollerVC's thumbnailPickerView image: %@", image);
+    UIImage *image = [self.images objectAtIndex:index];
+//    NSLog(@"thumbnail image:%@", image);
     usleep(10*1000);
     return image;
 }
