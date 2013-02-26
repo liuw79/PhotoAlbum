@@ -43,11 +43,12 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
         self.photoArray = [ImageList GetImageList];
         
         //建立图片ScrollView
-        CGRect photoScrFrame = self.view.frame;
+        CGRect photoScrFrame = CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y, self.view.frame.size.width, self.view.frame.size.height - 44);
         UIScrollView *photoScr = [[UIScrollView alloc] initWithFrame:photoScrFrame];
+        //[photoScr setAutoresizingMask:UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleHeight];
         [photoScr setPagingEnabled:YES];
-        [photoScr setDirectionalLockEnabled:YES];
-        [photoScr setAlwaysBounceHorizontal:YES];
+        //[photoScr setScrollEnabled:YES];
+        //[photoScr setScrollsToTop:NO];
         [photoScr setShowsHorizontalScrollIndicator:NO];
         [photoScr setShowsVerticalScrollIndicator:NO];
         [photoScr setContentSize: CGSizeMake(photoScrFrame.size.width * self.photoArray.count, photoScrFrame.size.height)];
@@ -60,17 +61,31 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
         //初始化复用相关SET
         self.recycledPages = [[NSMutableSet alloc] init];
         self.visiblePages = [[NSMutableSet alloc] init];
+        self.images = [[NSMutableArray alloc] initWithCapacity:self.photoArray.count];
         
         //根据需要创建图片对象
         [self tilePages];
         
+        //填充images数组
+        for (int i = 0; i < self.photoArray.count; i ++) {
+            NSString *filepath = [[NSBundle mainBundle] pathForResource:[self.photoArray objectAtIndex:i] ofType:@"jpg"];
+            NSLog(@"filepath1111: %@", filepath);
+            UIImage *image = [UIImage imageWithContentsOfFile:filepath];
+            [self.images addObject:image];
+        }
+        NSLog(@"image array: %@", self.images);
+        
         //缩略图ToolBar
-        self.toolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 660, 1024, 44)];          //TEST
-        [self.toolBar setBackgroundColor:[UIColor blackColor]];
-        self.thumbnailPickerView = [[ThumbnailPickerView alloc] initWithFrame:CGRectMake(0, 0, 1024, 44)];
+        self.toolBar = [[UIToolbar alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height - 22, self.view.frame.size.width, 44)];          //TEST
+        [self.toolBar setBarStyle:UIBarStyleBlack];
+        self.thumbnailPickerView = [[ThumbnailPickerView alloc] initWithFrame:CGRectMake(0, 0, self.toolBar.bounds.size.width, self.toolBar.bounds.size.height)];
+        [self.thumbnailPickerView setDelegate:self];
+        [self.thumbnailPickerView setDataSource:self];
         [self.thumbnailPickerView setBackgroundColor:[UIColor blueColor]];
         [self.toolBar addSubview:self.thumbnailPickerView];
         [self.view addSubview:self.toolBar];
+        
+
     }
     return self;
 }
@@ -87,8 +102,6 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
     CGRect pageFrame = bounds;
     pageFrame.size.width = bounds.size.width + 10;
     pageFrame.origin.x = bounds.size.width * index;
-    //    NSLog(@"photoScr bounds: %@", NSStringFromCGRect(bounds));
-    //    NSLog(@"pageFrame: %@", NSStringFromCGRect(pageFrame));
     
     return pageFrame;
 }
@@ -138,13 +151,6 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 	// Do any additional setup after loading the view.
 }
 
-- (void)viewDidAppear:(BOOL)animated
-{
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-}
 
 - (void)tilePages
 {
@@ -231,7 +237,7 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 //首次加载完成执行
 - (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
 {
-    NSLog(@"scrollViewDidEndScrollingAnimation");
+    //NSLog(@"scrollViewDidEndScrollingAnimation");
     [self setCurrentImageview];  
     
 }
@@ -571,7 +577,10 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 
 - (UIImage *)thumbnailPickerView:(ThumbnailPickerView *)thumbnailPickerView imageAtIndex:(NSUInteger)index
 {
-    UIImage *image = [UIImage imageNamed:[self.photoArray objectAtIndex:index]];
+    //NSLog(@"imagename %@", [self.photoArray objectAtIndex:index]);
+    UIImage *image = [UIImage imageNamed:[[self.photoArray objectAtIndex:index] stringByAppendingString:@".jpg"]];
+    //UIImage *image = [UIImage imageNamed:@"image002.jpg"];
+    NSLog(@"PhotoScrollerVC's thumbnailPickerView image: %@", image);
     usleep(10*1000);
     return image;
 }

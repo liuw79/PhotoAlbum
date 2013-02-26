@@ -15,7 +15,7 @@
 
 @interface PhotoScrollerViewController : UIViewController<UIScrollViewDelegate, UIGestureRecognizerDelegate>
 
-@property (copy, nonatomic) NSArray *images;
+@property (copy, nonatomic) NSMutableArray *images;
 @property CGPoint selectedCellOriginalPos;
 @property(nonatomic,assign)id<PhotoViewDelegate>photoDelegate;
 @property (strong, nonatomic) UIScrollView *scrollView;

@@ -244,7 +244,10 @@ static const NSUInteger kBigThumbnailTagOffset = 1000;
                 float span = (kThumbnailSize.width - width)/2.0;
                 
                 CGRect rect = CGRectMake(imageView.frame.origin.x + span, imageView.frame.origin.y, width, kThumbnailSize.height);
+                
+                //NSLog(@"ThumbnailPickerView.m: %@", NSStringFromCGRect(rect));
                 [imageView setFrame:rect];
+                
             });
         });
         
