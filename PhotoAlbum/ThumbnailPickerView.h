@@ -48,6 +48,7 @@
 - (void)reloadThumbnailAtIndex:(NSUInteger)index;
 
 - (void)setSelectedIndex:(NSUInteger)selectedIndex animated:(BOOL)animated;
+- (void)_updateBigThumbnailPositionVerbose:(BOOL)verbose animated:(BOOL)animated;
 
 // NSNotFound if nothing is selected
 @property (nonatomic, assign) NSUInteger selectedIndex;

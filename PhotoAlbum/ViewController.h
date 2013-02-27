@@ -18,5 +18,7 @@
 
 @interface ViewController : UIViewController<UIGestureRecognizerDelegate, PhotoViewDelegate>
 
+@property (nonatomic,readwrite)BOOL orientationIsPortrait;
+
 @end
 

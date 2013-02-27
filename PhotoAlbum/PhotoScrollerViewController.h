@@ -10,6 +10,7 @@
 #import "ValueDefine.h"
 #import "ImageList.h"
 #import "MyImageView.h"
+#import "ThumbnailPickerView.h"
 
 @protocol PhotoViewDelegate;
 
@@ -20,6 +21,9 @@
 @property(nonatomic,assign)id<PhotoViewDelegate>photoDelegate;
 @property (strong, nonatomic) UIScrollView *scrollView;
 @property(nonatomic,retain)UIToolbar *toolBar;
+@property (strong, nonatomic) ThumbnailPickerView *thumbnailPickerView;
+@property(nonatomic,readwrite)int currentPageNum;
+@property(nonatomic,readwrite)BOOL orientationIsPortrait;
 
 - (void)tilePages;
 - (void)renewContentsViewSize:(UIInterfaceOrientation)toOrientation;
@@ -28,7 +32,7 @@
 
 @protocol PhotoViewDelegate <NSObject>
 - (void)photoViewDisappear:(BOOL)value;
-- (void)animateImageViewBackToNormal:(UIImageView *)imageView WithPosition:(CGPoint)point;
+- (void)animateImageViewBackToNormal:(int)currentPageNum WithPosition:(CGPoint)point;
 - (void)moveImageView:(UIImageView *)imageView ToPosition:(CGPoint)point;
 - (void)photoHiddenSwitch:(int)newIndex;
 

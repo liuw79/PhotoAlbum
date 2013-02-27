@@ -7,7 +7,6 @@
 //
 
 #import "PhotoScrollerViewController.h"
-#import "ThumbnailPickerView.h"
 #import <QuartzCore/QuartzCore.h>
 
 static const CGFloat kDefaultAnimationDuration = 0.3;
@@ -28,11 +27,46 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 @property(nonatomic,readwrite)CGFloat deltaScale;
 @property(nonatomic,readwrite)CGFloat lastRotation;
 @property(nonatomic,readwrite)CGPoint lastPosition;
-@property (strong, nonatomic) ThumbnailPickerView *thumbnailPickerView;
 
 @end
 
 @implementation PhotoScrollerViewController
+
+#pragma mark - Private API about ThumbnailPickerView
+
+- (void)_updateUIWithSelectedIndex:(NSUInteger)index
+{
+    //self.imageView.image = [self.photoArray objectAtIndex:index];
+    NSLog(@"index: %d", index);
+}
+
+#pragma mark - ThumbnailPickerView data source
+
+- (NSUInteger)numberOfImagesForThumbnailPickerView:(ThumbnailPickerView *)thumbnailPickerView
+{
+    return self.photoArray.count;
+}
+
+- (UIImage *)thumbnailPickerView:(ThumbnailPickerView *)thumbnailPickerView imageAtIndex:(NSUInteger)index
+{
+    UIImage *image = [self.images objectAtIndex:index];
+    //    NSLog(@"thumbnail image:%@", image);
+    usleep(10*1000);
+    return image;
+}
+
+#pragma mark - ThumbnailPickerView delegate
+
+- (void)thumbnailPickerView:(ThumbnailPickerView *)thumbnailPickerView didSelectImageWithIndex:(NSUInteger)index
+{
+    //////////////设置 CurrentPageNum///////////////////
+    self.currentPageNum = index;
+    
+    [self tilePages];
+    
+    CGPoint offset = CGPointMake(self.scrollView.frame.size.width *index, 0);
+    [self.scrollView scrollRectToVisible:CGRectMake(offset.x, offset.y, self.scrollView.frame.size.width, self.scrollView.frame.size.height) animated:YES];
+}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -76,12 +110,14 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
         
         //缩略图ToolBar
         //NSLog(@"photo vc view: %@", NSStringFromCGRect(self.view.frame));   //TEST
-        self.toolBar = [[UIToolbar alloc] init];
+        self.toolBar = [[UIToolbar alloc]initWithFrame:CGRectMake(0, self.view.frame.size.height - 22, self.view.frame.size.width, 44)];
+        [self.toolBar setAutoresizingMask:UIViewAutoresizingFlexibleTopMargin];
         [self.toolBar setBarStyle:UIBarStyleBlack];
-        self.thumbnailPickerView = [[ThumbnailPickerView alloc] init];
+        self.thumbnailPickerView = [[ThumbnailPickerView alloc] initWithFrame:CGRectMake(0, 0, self.toolBar.bounds.size.width, self.toolBar.bounds.size.height)];
         [self.thumbnailPickerView setDelegate:self];
         [self.thumbnailPickerView setDataSource:self];
         [self.toolBar addSubview:self.thumbnailPickerView];
+        
         [self.view addSubview:self.toolBar];
         
         //NSLog(@"Photo vc init view: %@", NSStringFromCGRect(self.view.frame));
@@ -89,11 +125,17 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
     return self;
 }
 
+- (void)tapBtn
+{
+    NSLog(@"tapped...");
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
-    [self.toolBar setFrame:CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, 44)];
+    [self.toolBar setFrame:CGRectMake(0, self.view.frame.size.height - 44, self.view.frame.size.width, 44)];
     [self.thumbnailPickerView setFrame:CGRectMake(0, 0, self.toolBar.bounds.size.width, self.toolBar.bounds.size.height)];
     NSLog(@"Photo vc willappear toolbar: %@", NSStringFromCGRect(self.toolBar.frame));
+    NSLog(@"Photo vc willappear thumb: %@", NSStringFromCGRect(self.thumbnailPickerView.frame));
     NSLog(@"Photo vc willappear view: %@", NSStringFromCGRect(self.view.frame));
 }
 
@@ -136,14 +178,18 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
     
     if ( UIInterfaceOrientationIsPortrait(toOrientation) )
     {
-        self.view.frame = CGRectMake(0, 0, kPORTRAIT_WIDTH, kPORTRAIT_HEIGHT - 40);
+        self.orientationIsPortrait = YES;
+        
+        self.view.frame = CGRectMake(0, 0, kPORTRAIT_WIDTH, kPORTRAIT_HEIGHT);
         self.scrollView.frame = CGRectMake(0, 0, kPORTRAIT_WIDTH, kPORTRAIT_HEIGHT - 40);
         scrWidth = kPORTRAIT_WIDTH * self.photoArray.count;
         scrHeight = kPORTRAIT_HEIGHT - 40;
     }
     else
     {
-        self.view.frame = CGRectMake(0, 0, kLANDSCAPE_WIDTH, kLANDSCAPE_HEIGHT - 40);
+        self.orientationIsPortrait = NO;
+        
+        self.view.frame = CGRectMake(0, 0, kLANDSCAPE_WIDTH, kLANDSCAPE_HEIGHT);
         self.scrollView.frame = CGRectMake(0, 0, kLANDSCAPE_WIDTH, kLANDSCAPE_HEIGHT - 40);
         scrWidth = kLANDSCAPE_WIDTH * self.photoArray.count;
         scrHeight = kLANDSCAPE_HEIGHT - 40;
@@ -238,6 +284,21 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
+    CGFloat pageWidth;
+    
+    if (_orientationIsPortrait) {
+        
+        pageWidth = 768.0;
+    }
+    else{
+        pageWidth = 1024.0;
+    }
+    
+    int page = floor((_scrollView.contentOffset.x - pageWidth / 2) / pageWidth) + 1;
+    
+    //////////////Set CurrentPageNum///////////////////
+    self.currentPageNum = page;
+    
     [self tilePages];
     
 }
@@ -258,6 +319,10 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
     CGRect visibleBounds = self.scrollView.bounds;
     int pageIndex = roundf(CGRectGetMinX(visibleBounds)/CGRectGetWidth(visibleBounds));
     [self.photoDelegate photoHiddenSwitch:pageIndex];
+    
+    //*************当结束滚动操作后，更新BigThumbnailPosition******************//
+    [_thumbnailPickerView setSelectedIndex:_currentPageNum];
+    [_thumbnailPickerView _updateBigThumbnailPositionVerbose:YES animated:NO];
 }
 
 - (void)setCurrentImageview
@@ -370,8 +435,7 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 //                if ([self.photoDelegate respondsToSelector:@selector(PhotoViewDisappear:)]) {
 //                    [self.photoDelegate photoViewDisappear:NO];
 //                }
-                
-            }else {
+            } else {
                 
                 //恢复toolBar的alpha值
                 self.toolBar.alpha = 1;
@@ -391,7 +455,8 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
                                      //***********************Pinch手势结束时，将选中的Cell图片使用动画复位***************************//
                                      if ([self.photoDelegate respondsToSelector:@selector(animateImageViewBackToNormal:WithPosition:)]) {
                                          
-                                         [self.photoDelegate animateImageViewBackToNormal:self.imageView WithPosition:self.selectedCellOriginalPos];
+                                         //[self.photoDelegate animateImageViewBackToNormal:self.imageView WithPosition:self.selectedCellOriginalPos];
+                                         [self.photoDelegate animateImageViewBackToNormal:self.currentPageNum WithPosition:self.selectedCellOriginalPos];
                                      }
                                      
                                  }
@@ -569,35 +634,7 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
     
 }
 
-#pragma mark - Private API about ThumbnailPickerView
 
-- (void)_updateUIWithSelectedIndex:(NSUInteger)index
-{
-    //self.imageView.image = [UIImage imageNamed:[self.photoArray objectAtIndex:index]];
-    NSLog(@"index: %d", index);
-}
-
-#pragma mark - ThumbnailPickerView data source
-
-- (NSUInteger)numberOfImagesForThumbnailPickerView:(ThumbnailPickerView *)thumbnailPickerView
-{
-    return self.photoArray.count;
-}
-
-- (UIImage *)thumbnailPickerView:(ThumbnailPickerView *)thumbnailPickerView imageAtIndex:(NSUInteger)index
-{
-    UIImage *image = [self.images objectAtIndex:index];
-//    NSLog(@"thumbnail image:%@", image);
-    usleep(10*1000);
-    return image;
-}
-
-#pragma mark - ThumbnailPickerView delegate
-
-- (void)thumbnailPickerView:(ThumbnailPickerView *)thumbnailPickerView didSelectImageWithIndex:(NSUInteger)index
-{
-    [self _updateUIWithSelectedIndex:index];
-}
 
 - (void)didReceiveMemoryWarning
 {

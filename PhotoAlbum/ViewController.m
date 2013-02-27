@@ -36,11 +36,10 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 
 @implementation ViewController
 
-- (void)animateImageViewBackToNormal:(UIImageView *)imageView WithPosition:(CGPoint)point
+- (void)animateImageViewBackToNormal:(int)currentPageNum WithPosition:(CGPoint)point
 {
-    UIView *view = [self.smallPhotoScrollView viewWithTag:imageView.tag];
+    UIView *view = [self.smallPhotoScrollView viewWithTag:currentPageNum];
     [view setHidden:NO];
-
 }
 
 //大图切换，改变当前隐藏的小图
@@ -66,26 +65,38 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
     [view setHidden:YES];
     self.currentHiddenIndex = view.tag;
     
+    
     //**********重置 ScrollView 的 Scale 和 Rotate值,以及 ToolBar 的 alpha值*******************//
     self.bigPhotoScrollerViewController.scrollView.transform = CGAffineTransformMakeScale(1.0, 1.0);
     self.bigPhotoScrollerViewController.scrollView.transform = CGAffineTransformRotate(self.bigPhotoScrollerViewController.scrollView.transform, 0.0);
     self.bigPhotoScrollerViewController.toolBar.alpha = 1.0;
     
     [self.bigPhotoScrollerViewController.view setFrame:self.view.frame];
+    [self.bigPhotoScrollerViewController setOrientationIsPortrait:self.orientationIsPortrait];
+    [self.bigPhotoScrollerViewController renewContentsViewSize:[UIApplication sharedApplication].statusBarOrientation];
+    [self.bigPhotoScrollerViewController setCurrentPageNum:view.tag];
+    
 //    NSLog(@"vc presentPhotoView self.view1111: %@", NSStringFromCGRect(self.view.frame));
 //    NSLog(@"vc presentPhotoView bigPhoto2222: %@",NSStringFromCGRect(self.bigPhotoScrollerViewController.view.frame));
     
-    CGRect toFrame = CGRectMake(
-                                self.bigPhotoScrollerViewController.scrollView.frame.size.width*cellViewTag-1, 0,
-                                self.bigPhotoScrollerViewController.scrollView.frame.size.width,
-                                self.bigPhotoScrollerViewController.scrollView.frame.size.height);
     
-    [self.bigPhotoScrollerViewController.scrollView scrollRectToVisible:toFrame animated:NO];
-    [self.bigPhotoScrollerViewController renewContentsViewSize:[UIApplication sharedApplication].statusBarOrientation];
-    [self.bigPhotoScrollerViewController.scrollView setTransform:CGAffineTransformMakeScale(1.0, 1.0)];
-    [self.bigPhotoScrollerViewController.scrollView setTransform:CGAffineTransformRotate(self.bigPhotoScrollerViewController.scrollView.transform, 0.0)];
+    //***********根据选取的小图片初始化scrollView的contentView内容*************//
+    if (cellViewTag != 0) {
+        
+        CGPoint offset = CGPointMake(self.bigPhotoScrollerViewController.scrollView.frame.size.width *cellViewTag, 0);
+        
+        [self.bigPhotoScrollerViewController.scrollView scrollRectToVisible:CGRectMake(offset.x, offset.y, self.bigPhotoScrollerViewController.scrollView.frame.size.width, self.bigPhotoScrollerViewController.scrollView.frame.size.height) animated:NO];
+        
+    }else{
+        
+        [self.bigPhotoScrollerViewController tilePages];
+    }
+    
+    //**********刷新ThumbnailPickerView************//
+    [self.bigPhotoScrollerViewController.thumbnailPickerView setSelectedIndex:cellViewTag];
+    [self.bigPhotoScrollerViewController.thumbnailPickerView _updateBigThumbnailPositionVerbose:YES animated:NO];
+    
     [self.view addSubview:self.bigPhotoScrollerViewController.view];
-    
 }
 
 - (void)viewDidLoad
@@ -123,7 +134,7 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
         [self.smallPhotoScrollView addSubview:cellImageView];
     }
     
-    [self RenewSmallPhotoViewFrame:[UIApplication sharedApplication].statusBarOrientation];
+    [self RenewViewOrientation:[UIApplication sharedApplication].statusBarOrientation];
     [self RenewSmallPhotoScrollViewContentsize];
     
 //    NSLog(@"vc of didLoad: %@", NSStringFromCGRect(self.view.frame));
@@ -156,7 +167,7 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 //准备旋转
 - (void)willRotateToInterfaceOrientation:(UIInterfaceOrientation)toInterfaceOrientation duration:(NSTimeInterval)duration
 {
-    [self RenewSmallPhotoViewFrame:toInterfaceOrientation];
+    [self RenewViewOrientation:toInterfaceOrientation];
 }
 
 //旋转完毕
@@ -184,17 +195,19 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 }
 
 //更新ScrollView和里面每个小图的frame
-- (void)RenewSmallPhotoViewFrame:(UIInterfaceOrientation)toInterfaceOrientation
+- (void)RenewViewOrientation:(UIInterfaceOrientation)toInterfaceOrientation
 {
     for (int i = 1; i <= self.photoArray.count; ++ i) {
         UIView *view = [self.view viewWithTag:i];
         
         if (UIInterfaceOrientationIsPortrait(toInterfaceOrientation))
         {
+            self.orientationIsPortrait = YES;
             [view setFrame:[ImageFrame FrameWithOrdernumberPortrait:i]];
         }
         else
         {
+            self.orientationIsPortrait = NO;
             [view setFrame:[ImageFrame FrameWithOrdernumberLandscape:i]];
         }
     }
@@ -344,7 +357,6 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
         case UIGestureRecognizerStateCancelled:
         case UIGestureRecognizerStateFailed:
         {
-            
             [self performSelector:@selector(transformingGestureDidFinishWithGesture:) withObject:panGesture afterDelay:0.2];
             
             break;
@@ -353,7 +365,6 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
         case UIGestureRecognizerStateBegan:
         {
             self.lastPosition = CGPointMake(view.center.x,view.center.y);
-            
         }
             
         case UIGestureRecognizerStateChanged:
