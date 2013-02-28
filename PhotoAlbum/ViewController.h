@@ -19,6 +19,7 @@
 @interface ViewController : UIViewController<UIGestureRecognizerDelegate, PhotoViewDelegate>
 
 @property (nonatomic,readwrite)BOOL orientationIsPortrait;
+@property (nonatomic,readwrite)BOOL snapShotMode;
 
 @end
 

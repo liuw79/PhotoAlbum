@@ -9,11 +9,14 @@
 #import "ViewController.h"
 #import <QuartzCore/QuartzCore.h>
 
+#define MinimumScale 0.7
+
 static const CGFloat kDefaultAnimationDuration = 0.3;
 static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction;
 
 @interface ViewController ()
 
+@property (nonatomic, strong) UIView* gridView;
 @property (nonatomic, readwrite) int currentHiddenIndex;
 @property (nonatomic, strong) NSArray *photoArray;
 @property (nonatomic, strong) PhotoScrollerViewController *bigPhotoScrollerViewController;
@@ -24,6 +27,7 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 @property (nonatomic,retain) UIPinchGestureRecognizer *pinchGesture;
 @property (nonatomic,retain) UITapGestureRecognizer *tapGesture;
 @property (nonatomic,retain) UIRotationGestureRecognizer *rotateGesture;
+@property (nonatomic,retain) UIPinchGestureRecognizer *rootPinchGesture;
 @property (nonatomic,readwrite) CGPoint lastPosition;
 @property (nonatomic,readwrite) CGFloat lastScale;
 @property (nonatomic,readwrite) CGFloat preScale;
@@ -35,6 +39,166 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 @end
 
 @implementation ViewController
+
+-(void)addRootGestureRecognizers:(UIView *)View
+{
+    
+//    _panGesture = [[UIPanGestureRecognizer alloc]initWithTarget:self action:@selector(panGestureUpdated:)];
+//    _panGesture.delegate = self;
+//    [_panGesture setCancelsTouchesInView:YES];
+//    [_panGesture setMaximumNumberOfTouches:2];
+//    [_panGesture setMinimumNumberOfTouches:2];
+//    [view addGestureRecognizer:_panGesture];
+//    [_panGesture release];
+    
+    self.rootPinchGesture = [[UIPinchGestureRecognizer alloc]initWithTarget:self action:@selector(rootPinchGestureUpdated:)];
+    self.rootPinchGesture.delegate = self;
+    [self.rootPinchGesture setCancelsTouchesInView:YES];
+    [self.gridView addGestureRecognizer:self.rootPinchGesture];
+    
+//    _tapGesture = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tapGestureUpdated:)];
+//    _tapGesture.delegate = self;
+//    [_tapGesture setCancelsTouchesInView:YES];
+//    [_tapGesture setNumberOfTapsRequired:2];
+//    [_tapGesture setNumberOfTouchesRequired:1];
+//    [view addGestureRecognizer:_tapGesture];
+//    [_tapGesture release];
+    
+}
+
+-(void)rootPinchGestureUpdated:(UIPinchGestureRecognizer *)pinchGesture
+{
+    NSLog(@"root view pinched...");
+    switch (pinchGesture.state) {
+            
+        case UIGestureRecognizerStateEnded:
+        case UIGestureRecognizerStateCancelled:
+        case UIGestureRecognizerStateFailed:
+        {
+            
+            if (self.lastScale >= MinimumScale) {
+                
+                //**************进入小图片集模式****************//
+                self.snapShotMode = NO;
+                
+                [self performSelector:@selector(transformingGestureDidFinishWithGesture:) withObject:pinchGesture afterDelay:0.2];
+                
+//                //*************恢复scrollView接收触控事件，允许滚动操作******************//
+//                [self.smallPhotoScrollView setContentSize:[_paGridView setScrollViewContentSizeWithWidth:_paGridView.gridViewCellSize.width andHeight:_paGridView.gridViewCellSize.height + _paGridView.padding]];
+//                
+//                for (PAGridViewCell *cell in _paGridView.cellArray) {
+//                    [cell setUserInteractionEnabled:YES];
+//                }
+                
+            }else
+            {
+                //*************进入图片集叠加模式****************//
+                self.snapShotMode = YES;
+                
+                [UIView animateWithDuration:kDefaultAnimationDuration
+                                      delay:0
+                                    options:kDefaultAnimationOptions
+                                 animations:^{
+                                     
+                                     [self.gridView setFrame:CGRectMake(self.gridView.frame.origin.x, self.gridView.frame.origin.y, PHOTOWIDTH, PHOTOHEIGHT)];
+                                     [self.smallPhotoScrollView setContentSize:CGSizeMake(PHOTOWIDTH, PHOTOHEIGHT)];
+                                     [self.smallPhotoScrollView setFrame:CGRectMake(self.gridView.frame.origin.x, self.gridView.frame.origin.y, PHOTOWIDTH, PHOTOHEIGHT)];
+                                     [self.gridView setCenter:CGPointMake(self.view.center.x, self.view.center.y)];
+                                     
+                                     for (int i = 1; i <= self.photoArray.count; ++ i) {
+                                         UIView *view = [self.view viewWithTag:i];
+                                         [view setUserInteractionEnabled:NO];
+                                     }
+                                     
+                                 }
+                 
+                                 completion:nil
+                 ];
+                
+            }
+            
+        }
+            
+        case UIGestureRecognizerStateBegan:
+        {
+            self.lastScale = pinchGesture.scale;
+            self.preScale = pinchGesture.scale;
+            
+            _oriFrame = _paGridView.frame;
+            
+            if (_snapShotMode) {
+                
+                //************添加动画，设置PAGridView的中心坐标图片集叠加位置*******************//
+                [UIView animateWithDuration:0.6
+                                      delay:0
+                                    options:kDefaultAnimationOptions
+                                 animations:^{
+                                     
+                                     [_paGridView setUpCellViewFrame];
+                                     
+                                 }
+                                 completion:nil
+                 ];
+                
+            }else
+            {
+                //************添加动画，设置PAGridView的中心坐标图片集叠加位置*******************//
+                [UIView animateWithDuration:0.6
+                                      delay:0
+                                    options:kDefaultAnimationOptions
+                                 animations:^{
+                                     
+                                     //    [_paGridView setFrame:CGRectMake(_paGridView.frame.origin.x, _paGridView.frame.origin.y, _paGridView.gridViewCellSize.width*2, _paGridView.gridViewCellSize.height*2)];
+                                     
+                                 }
+                 
+                                 completion:nil
+                 ];
+                
+            }
+            
+            break;
+        }
+            
+        case UIGestureRecognizerStateChanged:
+        {
+            
+            self.snapShotMode = NO;
+            _paGridView.ifSnapShotMode = NO;
+            self.lastScale = [pinchGesture scale];
+            
+            //        NSLog(@"The PAGridView's scrollView's frame is %@", NSStringFromCGRect(_paGridView.scrollView.frame));
+            
+            CGRect newFrame = _oriFrame;
+            newFrame.size.width *= _lastScale;
+            newFrame.size.height *= _lastScale;
+            
+            //**************限制newFrame的缩放最大最小值***********************//
+            if (newFrame.size.width > self.view.bounds.size.width*1.2) {
+                newFrame.size.width = self.view.bounds.size.width*1.2;
+            }
+            
+            if (newFrame.size.height > self.view.bounds.size.height*1.2) {
+                newFrame.size.height = self.view.bounds.size.height*1.2;
+            }
+            
+            newFrame.origin.x = _paGridView.frame.origin.x;
+            newFrame.origin.y = _paGridView.frame.origin.y;
+            
+            [_paGridView setFrame:newFrame];
+            [_paGridView.scrollView setContentSize:newFrame.size];
+            
+            self.preScale = [pinchGesture scale];
+            
+            break;
+        }
+            
+        default:
+            break;
+    }
+    
+}
+
 
 - (void)animateImageViewBackToNormal:(int)currentPageNum WithPosition:(CGPoint)point
 {
@@ -57,6 +221,11 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
 - (void)loadView
 {
     self.view = [[UIView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    self.gridView = [[UIView alloc] initWithFrame:self.view.frame];
+    [self.gridView setBackgroundColor:[UIColor blueColor]];
+    [self.view addSubview:self.gridView];
+    [self addRootGestureRecognizers:self.gridView];
+    NSLog(@"self.gridView: %@", NSStringFromCGRect(self.gridView.frame));
 }
 
 - (void)presentPhotoView:(NSInteger)cellViewTag
@@ -111,7 +280,7 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
     
     self.smallPhotoScrollView = [[UIScrollView alloc] initWithFrame:self.view.frame];
     [self.smallPhotoScrollView setBackgroundColor:[UIColor blackColor]];
-    [self.view addSubview:self.smallPhotoScrollView];
+    [self.gridView addSubview:self.smallPhotoScrollView];
     
     self.bigPhotoScrollerViewController = [[PhotoScrollerViewController alloc] init];
     [self.bigPhotoScrollerViewController setPhotoDelegate:self];
@@ -260,13 +429,20 @@ static const UIViewAnimationOptions kDefaultAnimationOptions = UIViewAnimationOp
     [view addGestureRecognizer:self.rotateGesture];
 }
 
+#pragma mark - ======================UIGestureRecognizerDelegate==================================
 -(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
-    return YES;
+    if (gestureRecognizer.view == otherGestureRecognizer.view) {
+        
+        return YES;
+    }
+    
+    return NO;
 }
 
 -(BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
 {
+    
     return YES;
 }
 
